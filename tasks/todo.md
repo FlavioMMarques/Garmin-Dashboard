@@ -41,9 +41,9 @@
 ## R1: Corridas do período + aba Corrida
 **Description:** `/api/runs?from=YYYY-MM-DD` busca na Garmin todas as corridas (`activityType=running`, inclui esteira) desde `from`, paginando de 100 em 100, e devolve lista enxuta com campos de corrida (distância, duração, velocidade, FC média/máx, cadência, passada, oscilação, contato, razão vertical, potência, TE aeróbico/anaeróbico, label, `fastestSplit_*`, `hrTimeInZone_*`, temperatura, elevação). Cache em memória 10 min por `from`. Aba "Corrida" vira a inicial, com seletor 3m / 6m (padrão) / 1 ano / tudo e stat tiles do período (corridas, km, tempo, ritmo médio).
 **Acceptance criteria:**
-- [ ] Período "tudo" pagina até acabar; nenhum campo pessoal (nome do dono, GPS) sai do servidor
-- [ ] Segunda chamada igual em < 10 min não chama a Garmin
-- [ ] Trocar período não recarrega a página; tiles batem com a soma das corridas
+- [x] Período "tudo" pagina até acabar; nenhum campo pessoal (nome do dono, GPS) sai do servidor
+- [x] Segunda chamada igual em < 10 min não chama a Garmin
+- [x] Trocar período não recarrega a página; tiles batem com a soma das corridas
 **Verification:** testes de rota (paginação, cache, mapeamento) com fixture fictícia; manual
 **Dependencies:** T3
 **Files:** server/src/routes/runs.ts(+test), web/src/api/runs.ts, web/src/pages/RunningPage.tsx, web/src/components/StatTile.tsx
@@ -52,8 +52,8 @@
 ## R2: Volume + ritmo
 **Description:** funções puras `weekly.ts` (semana ISO seg–dom, semanas vazias = 0), `monthly`, acumulado do ano vs ano anterior, média móvel; gráficos: km/semana (barras) com maior corrida, km/mês, acumulado YTD (2 linhas), ritmo por corrida (pontos) + média móvel por faixa de distância.
 **Acceptance criteria:**
-- [ ] Semanas sem corrida aparecem como zero
-- [ ] Eixo de ritmo invertido (mais rápido em cima) e formatado em min:ss
+- [x] Semanas sem corrida aparecem como zero
+- [x] Eixo de ritmo invertido (mais rápido em cima) e formatado em min:ss
 **Verification:** testes de `weekly`/`rolling`; conferir km de uma semana com o app
 **Dependencies:** R1
 **Files:** web/src/lib/runStats.ts(+test), web/src/components/charts/*, RunningPage.tsx
@@ -62,8 +62,8 @@
 ## R3: Eficiência + melhores marcas + VDOT
 **Description:** eficiência = velocidade (m/min) ÷ FC média por corrida + média móvel; melhor 1k/1mi/5k/10k/21k por mês e recorde acumulado (degraus); VDOT estimado (fórmula de Daniels/Gilbert) a partir das melhores marcas recentes, rotulado "estimativa".
 **Acceptance criteria:**
-- [ ] Recordes só melhoram ao longo do tempo (curva em degraus) e o atual aparece destacado
-- [ ] VDOT de 5 km em 20:00 ≈ 49,8 (referência das tabelas de Daniels)
+- [x] Recordes só melhoram ao longo do tempo (curva em degraus) e o atual aparece destacado
+- [x] VDOT de 5 km em 20:00 ≈ 49,8 (referência das tabelas de Daniels)
 **Verification:** testes de `vdot` e `bests`
 **Dependencies:** R1
 **Files:** web/src/lib/vdot.ts(+test), web/src/lib/runStats.ts, RunningPage.tsx
@@ -72,15 +72,15 @@
 ## R4: Zonas + dinâmica + carga + calor
 **Description:** tempo por zona de FC por semana (barras empilhadas, % leve vs forte); tendências de cadência, passada, oscilação, contato, razão vertical, potência (pequenos múltiplos); TE aeróbico/anaeróbico por corrida e distribuição de `trainingEffectLabel`; dispersão ritmo × temperatura.
 **Acceptance criteria:**
-- [ ] Corridas sem o dado (ex.: esteira sem potência) ficam fora daquele gráfico, sem quebrar
-- [ ] Zonas somam o tempo total das corridas com FC
+- [x] Corridas sem o dado (ex.: esteira sem potência) ficam fora daquele gráfico, sem quebrar
+- [x] Zonas somam o tempo total das corridas com FC
 **Verification:** testes das agregações; manual
 **Dependencies:** R1
 **Files:** web/src/lib/runStats.ts, web/src/components/charts/*, RunningPage.tsx
 **Scope:** M
 
 ## Checkpoint R
-- [ ] Aba Corrida com dados reais; km de uma semana e uma melhor marca conferidos com o app; testes + typecheck
+- [x] Aba Corrida com dados reais; km de uma semana e uma melhor marca conferidos com o app; testes + typecheck
 
 ## R5: Detalhe km a km (opcional)
 **Description:** clicar numa corrida → baixar `.FIT` (`/download-service/files/activity/{id}`), decodificar no servidor, ritmo/FC/cadência por km. **Perguntar antes** sobre a dependência de parser FIT.

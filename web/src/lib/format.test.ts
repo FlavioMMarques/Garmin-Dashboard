@@ -3,6 +3,13 @@ import {
   activityTypeLabel,
   formatDistance,
   formatDuration,
+  dayOfYearLabel,
+  formatDayMonth,
+  formatDecimal,
+  formatKm1,
+  formatKmTotal,
+  formatMonthShort,
+  formatTotalTime,
   formatLocalDateTime,
   formatPace,
   formatSpeed,
@@ -78,5 +85,38 @@ describe("activityTypeLabel", () => {
     expect(activityTypeLabel("running")).toBe("Corrida");
     expect(activityTypeLabel("treadmill_running")).toBe("Esteira");
     expect(activityTypeLabel("some_new_sport")).toBe("some new sport");
+  });
+});
+
+describe("tile totals", () => {
+  it("formats km totals with precision that fits the size", () => {
+    expect(formatKmTotal(412_345)).toBe("412 km");
+    expect(formatKmTotal(68_420)).toBe("68,4 km");
+  });
+  it("formats total time in hours and minutes", () => {
+    expect(formatTotalTime(137_520)).toBe("38 h 12 min");
+    expect(formatTotalTime(2700)).toBe("45 min");
+  });
+});
+
+describe("axis labels", () => {
+  it("formats days and months in pt-BR", () => {
+    expect(formatDayMonth("2026-10-05")).toBe("05/10");
+    expect(formatMonthShort("2026-10")).toBe("out/26");
+    expect(formatMonthShort("2026-01")).toBe("jan/26");
+  });
+  it("converts a day of year back to a date label", () => {
+    expect(dayOfYearLabel(2026, 1)).toBe("01/01");
+    expect(dayOfYearLabel(2026, 61)).toBe("02/03");
+  });
+  it("formats km with one decimal", () => {
+    expect(formatKm1(12.345)).toBe("12,3 km");
+  });
+});
+
+describe("formatDecimal", () => {
+  it("uses a comma and fixed decimals", () => {
+    expect(formatDecimal(1.0834)).toBe("1,08");
+    expect(formatDecimal(36.54, 1)).toBe("36,5");
   });
 });

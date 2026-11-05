@@ -76,3 +76,57 @@ const TYPE_LABELS: Record<string, string> = {
 export function activityTypeLabel(typeKey: string): string {
   return TYPE_LABELS[typeKey] ?? typeKey.replaceAll("_", " ");
 }
+
+/** Totals for tiles: "412 km" from 100 km up, "68,4 km" below. */
+export function formatKmTotal(meters: number): string {
+  const km = meters / 1000;
+  return `${(km >= 100 ? decimal(0) : kmh1).format(km)} km`;
+}
+
+/** 137520 → "38 h 12 min"; 2700 → "45 min". */
+export function formatTotalTime(seconds: number): string {
+  const totalMin = Math.round(seconds / 60);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return h > 0 ? `${h} h ${pad2(m)} min` : `${m} min`;
+}
+
+/** "2026-10-05" → "05/10". */
+export function formatDayMonth(day: string): string {
+  return `${day.slice(8, 10)}/${day.slice(5, 7)}`;
+}
+
+const MONTHS_SHORT = [
+  "jan",
+  "fev",
+  "mar",
+  "abr",
+  "mai",
+  "jun",
+  "jul",
+  "ago",
+  "set",
+  "out",
+  "nov",
+  "dez",
+];
+
+/** "2026-10" → "out/26". */
+export function formatMonthShort(month: string): string {
+  return `${MONTHS_SHORT[Number(month.slice(5, 7)) - 1]}/${month.slice(2, 4)}`;
+}
+
+/** Day-of-year (1-based) → "dd/mm" for that year. */
+export function dayOfYearLabel(year: number, day: number): string {
+  const d = new Date(year, 0, day);
+  return `${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}`;
+}
+
+export function formatKm1(km: number): string {
+  return `${kmh1.format(km)} km`;
+}
+
+/** pt-BR number with fixed decimals: 1.0834 → "1,08". */
+export function formatDecimal(n: number, digits = 2): string {
+  return decimal(digits).format(n);
+}
