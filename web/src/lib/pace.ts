@@ -35,7 +35,7 @@ export function median(values: number[]): number {
 }
 
 /** Linear-interpolated quantile of a sorted array. */
-function quantile(sorted: number[], q: number): number {
+export function quantile(sorted: number[], q: number): number {
   const pos = (sorted.length - 1) * q;
   const lo = Math.floor(pos);
   return sorted[lo]! + (sorted[Math.ceil(pos)]! - sorted[lo]!) * (pos - lo);

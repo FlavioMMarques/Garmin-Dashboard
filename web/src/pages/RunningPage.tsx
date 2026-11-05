@@ -15,6 +15,7 @@ import { ZonesChart } from "../components/charts/ZonesChart";
 import { labelCounts, weeklyZones, zoneShare } from "../lib/training";
 import { TrainingTypesChart } from "../components/charts/TrainingTypesChart";
 import { HeatChart } from "../components/charts/HeatChart";
+import { DynamicsChart } from "../components/charts/DynamicsChart";
 import {
   MonthlyVolumeChart,
   WeeklyVolumeChart,
@@ -159,6 +160,11 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
             />
             <TrainingTypesChart counts={charts.labels} refreshing={isPlaceholderData} />
             <HeatChart runs={current} refreshing={isPlaceholderData} />
+          </div>
+
+          <h2 className="section-title">Dinâmica</h2>
+          <div className="chart-grid">
+            <DynamicsChart runs={current} window={PACE_WINDOW} refreshing={isPlaceholderData} />
           </div>
 
           <h2 className="section-title">Volume</h2>

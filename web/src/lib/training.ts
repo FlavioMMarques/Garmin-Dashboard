@@ -1,4 +1,4 @@
-import { median } from "./pace";
+import { median, quantile } from "./pace";
 import { weeklyVolume, weekStart } from "./volume";
 
 type Zones = [number, number, number, number, number];
@@ -122,4 +122,18 @@ export function heatBins(runs: Run[], binC = 2): HeatBin[] {
       count: paces.length,
       medianSecPerKm: Math.round(median(paces) * 10) / 10,
     }));
+}
+
+/**
+ * Axis range for a metric: 5th–95th percentile plus `padFraction` of that span,
+ * always including `keep` (trend values). Outliers beyond it are drawn off-scale.
+ */
+export function robustRange(values: number[], keep: number[], padFraction = 0.1): [number, number] {
+  if (values.length === 0) return [0, 1];
+  const sorted = [...values].sort((a, b) => a - b);
+  const lo = Math.min(quantile(sorted, 0.05), ...keep);
+  const hi = Math.max(quantile(sorted, 0.95), ...keep);
+  // A flat series still gets a visible band (2% of its level).
+  const pad = Math.max((hi - lo) * padFraction, Math.abs(hi) * 0.02, 1e-6);
+  return [lo - pad, hi + pad];
 }

@@ -135,9 +135,9 @@ export function vdotFromRuns(
   return top;
 }
 
-/** First full-window rolling median vs the latest one (see paceTrend). */
+/** First full-window rolling median vs the latest one (see paceTrend). Works for any series. */
 export function efficiencyTrend(
-  points: EfficiencyPoint[],
+  points: { rolling: number }[],
   window: number,
 ): { first: number; last: number } | null {
   if (points.length === 0) return null;

@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { heatBins, labelCounts, metricSeries, weeklyZones, zoneShare } from "./training";
+import {
+  heatBins,
+  labelCounts,
+  metricSeries,
+  robustRange,
+  weeklyZones,
+  zoneShare,
+} from "./training";
 
 type Zones = [number, number, number, number, number];
 const run = (
@@ -109,5 +116,20 @@ describe("heatBins", () => {
       { fromC: 22, toC: 24, count: 2, medianSecPerKm: 335 },
       { fromC: 28, toC: 30, count: 1, medianSecPerKm: 360 },
     ]);
+  });
+});
+
+describe("robustRange", () => {
+  it("frames the 5th–95th percentile with padding and keeps trend values inside", () => {
+    const values = [160, 161, 162, 163, 164, 165, 166, 167, 168, 106]; // one walk
+    const [lo, hi] = robustRange(values, [150], 0.1);
+    expect(lo).toBeLessThanOrEqual(150); // trend value kept
+    expect(lo).toBeGreaterThan(106); // walk drawn off-scale
+    expect(hi).toBeGreaterThanOrEqual(168);
+  });
+
+  it("pads a flat series so it doesn't collapse to a line", () => {
+    const [lo, hi] = robustRange([8.5, 8.5, 8.5], [], 0.1);
+    expect(hi - lo).toBeGreaterThan(0);
   });
 });
