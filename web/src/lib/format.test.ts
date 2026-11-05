@@ -5,6 +5,7 @@ import {
   formatDuration,
   dayOfYearLabel,
   formatDayMonth,
+  formatDecimal,
   formatKm1,
   formatKmTotal,
   formatMonthShort,
@@ -110,5 +111,12 @@ describe("axis labels", () => {
   });
   it("formats km with one decimal", () => {
     expect(formatKm1(12.345)).toBe("12,3 km");
+  });
+});
+
+describe("formatDecimal", () => {
+  it("uses a comma and fixed decimals", () => {
+    expect(formatDecimal(1.0834)).toBe("1,08");
+    expect(formatDecimal(36.54, 1)).toBe("36,5");
   });
 });

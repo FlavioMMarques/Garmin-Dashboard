@@ -40,6 +40,8 @@ export interface EfficiencyPoint {
   id: number;
   startLocal: string;
   distanceM: number;
+  avgSpeedMps: number;
+  avgHr: number;
   /** Meters covered per heartbeat: (m/min) ÷ bpm. Higher = fitter at the same effort. */
   metersPerBeat: number;
   /** Median of the last `window` runs. */
@@ -60,6 +62,8 @@ export function efficiencySeries(runs: Run[], window = 5): EfficiencyPoint[] {
       id: r.id,
       startLocal: r.startLocal,
       distanceM: r.distanceM,
+      avgSpeedMps: r.avgSpeedMps,
+      avgHr: r.avgHr,
       metersPerBeat,
       rolling: round4(median(recent)),
     });
@@ -129,4 +133,16 @@ export function vdotFromRuns(
     if (!top || value > top.value) top = { value, distance: d, effort };
   }
   return top;
+}
+
+/** First full-window rolling median vs the latest one (see paceTrend). */
+export function efficiencyTrend(
+  points: EfficiencyPoint[],
+  window: number,
+): { first: number; last: number } | null {
+  if (points.length === 0) return null;
+  return {
+    first: points[Math.min(window, points.length) - 1]!.rolling,
+    last: points.at(-1)!.rolling,
+  };
 }

@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import type { BestDistance } from "../api/runs";
-import { bestEfforts, efficiencySeries, monthlyBests, vdot, vdotFromRuns } from "./performance";
+import {
+  bestEfforts,
+  efficiencySeries,
+  efficiencyTrend,
+  monthlyBests,
+  vdot,
+  vdotFromRuns,
+} from "./performance";
 
 type Bests = Record<BestDistance, number | null>;
 const NO_BESTS: Bests = { "1000": null, "1609": null, "5000": null, "10000": null, "21098": null };
@@ -91,5 +98,20 @@ describe("vdotFromRuns", () => {
 
   it("is null without long-enough efforts", () => {
     expect(vdotFromRuns([run(1, "2026-10-01 07:00:00", { bests: { "1000": 200 } })])).toBeNull();
+  });
+});
+
+describe("efficiencyTrend", () => {
+  it("compares the first full window with the latest rolling median", () => {
+    const series = efficiencySeries(
+      [
+        run(1, "2026-10-01 07:00:00", { secPerKm: 300, hr: 125 }), // 1.6
+        run(2, "2026-10-02 07:00:00", { secPerKm: 300, hr: 200 }), // 1.0
+        run(3, "2026-10-03 07:00:00", { secPerKm: 300, hr: 160 }), // 1.25
+        run(4, "2026-10-04 07:00:00", { secPerKm: 300, hr: 125 }), // 1.6
+      ],
+      3,
+    );
+    expect(efficiencyTrend(series, 3)).toEqual({ first: 1.25, last: 1.25 });
   });
 });

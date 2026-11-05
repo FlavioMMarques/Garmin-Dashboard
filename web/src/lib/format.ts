@@ -125,3 +125,8 @@ export function dayOfYearLabel(year: number, day: number): string {
 export function formatKm1(km: number): string {
   return `${kmh1.format(km)} km`;
 }
+
+/** pt-BR number with fixed decimals: 1.0834 → "1,08". */
+export function formatDecimal(n: number, digits = 2): string {
+  return decimal(digits).format(n);
+}

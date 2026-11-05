@@ -7,6 +7,8 @@ import { PERIODS, periodRange, splitAt, summarize, toIsoDate, type Period } from
 import { monthlyVolume, weeklyVolume, yearToDate } from "../lib/volume";
 import { paceSeries } from "../lib/pace";
 import { PaceChart } from "../components/charts/PaceChart";
+import { EfficiencyChart } from "../components/charts/EfficiencyChart";
+import { efficiencySeries } from "../lib/performance";
 import {
   MonthlyVolumeChart,
   WeeklyVolumeChart,
@@ -42,6 +44,7 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
       weeks: weeklyVolume(current, range.from, todayIso),
       months: monthlyVolume(current, range.from, todayIso),
       pace: paceSeries(current, PACE_WINDOW),
+      efficiency: efficiencySeries(current, PACE_WINDOW),
     }),
     [current, range.from, todayIso],
   );
@@ -123,6 +126,11 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
           </div>
           <div className="chart-grid">
             <PaceChart points={charts.pace} window={PACE_WINDOW} refreshing={isPlaceholderData} />
+            <EfficiencyChart
+              points={charts.efficiency}
+              window={PACE_WINDOW}
+              refreshing={isPlaceholderData}
+            />
             <WeeklyVolumeChart weeks={charts.weeks} refreshing={isPlaceholderData} />
             <MonthlyVolumeChart months={charts.months} refreshing={isPlaceholderData} />
             {ytd && <YearToDateChart ytd={ytd} />}
