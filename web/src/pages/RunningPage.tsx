@@ -11,6 +11,7 @@ import { EfficiencyChart } from "../components/charts/EfficiencyChart";
 import { efficiencySeries, monthlyBests, BEST_DISTANCES } from "../lib/performance";
 import { BestsChart } from "../components/charts/BestsChart";
 import { BestEffortTiles } from "../components/BestEffortTiles";
+import { TrainingPaces } from "../components/TrainingPaces";
 import { ZonesChart } from "../components/charts/ZonesChart";
 import { labelCounts, weeklyZones, zoneShare } from "../lib/training";
 import { TrainingTypesChart } from "../components/charts/TrainingTypesChart";
@@ -149,6 +150,7 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
           <BestEffortTiles current={current} previous={previous} deltaLabel={vs} />
           <div className="chart-grid">
             <BestsChart series={charts.bests} refreshing={isPlaceholderData} />
+            <TrainingPaces runs={current} />
           </div>
 
           <h2 className="section-title">Treino</h2>

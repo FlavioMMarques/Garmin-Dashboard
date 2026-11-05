@@ -429,3 +429,28 @@ input[type="date"] {
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
+
+/* Training paces */
+.paces-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--space-4) var(--space-8);
+}
+.paces-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+}
+.paces-row {
+  display: contents;
+}
+.paces-list dt {
+  color: var(--text-muted);
+}
+.paces-list dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
