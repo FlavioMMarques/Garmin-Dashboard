@@ -1,0 +1,25 @@
+{
+  "settings": {
+    "displayName": "00000000-0000-0000-0000-000000000000",
+    "preferredLocale": "pt_BR",
+    "measurementSystem": "metric",
+    "firstDayOfWeek": {
+      "dayId": 1,
+      "dayName": "sunday",
+      "sortOrder": 1,
+      "isPossibleFirstDay": true
+    },
+    "timeZone": "America/Sao_Paulo",
+    "hydrationContainers": []
+  },
+  "activity": {
+    "activityId": 1,
+    "ownerId": 123456,
+    "ownerDisplayName": "abc-uuid",
+    "ownerFullName": "Pessoa Exemplo",
+    "ownerProfileImageUrlSmall": "https://example.test/small.png",
+    "ownerProfileImageUrlMedium": "https://example.test/medium.png",
+    "ownerProfileImageUrlLarge": "https://example.test/large.png",
+    "startLatitude": -10.0
+  }
+}
