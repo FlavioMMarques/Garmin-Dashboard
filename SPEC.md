@@ -12,6 +12,18 @@ Usuário: eu mesmo (uso pessoal, um único usuário, nunca publicado na internet
 3. **Sono** — vejo duração total, fases (profundo/leve/REM/acordado) e pontuação do sono por noite.
 4. **Tendências** — gráficos para um período (7 / 30 / 90 dias) de: passos, FC de repouso, sono (horas + fases), estresse e Body Battery; e volume semanal de atividades.
 5. A chave da API **nunca** chega ao navegador.
+6. **Corrida (prioridade)** — uso o relógio principalmente para correr; aba "Corrida" (aba inicial) com
+   período 3m / **6m (padrão)** / 1 ano / tudo, mostrando minha evolução:
+   - **Volume:** km por semana e por mês, nº de corridas, maior corrida da semana, acumulado do ano vs ano anterior.
+   - **Ritmo:** ritmo de cada corrida + média móvel, por faixa de distância (< 8 km, 8–15 km, > 15 km).
+   - **Eficiência aeróbica:** velocidade ÷ FC (metros por batimento) ao longo do tempo.
+   - **Melhores marcas:** evolução do melhor 1 km / 1 milha / 5 km / 10 km / 21 km (`fastestSplit_*`),
+     recordes destacados, e **VDOT estimado** (Jack Daniels) — a API não expõe VO2max.
+   - **Zonas de FC:** tempo por zona por semana (`hrTimeInZone_1..5`).
+   - **Dinâmica:** cadência, passada, oscilação vertical, tempo de contato, razão vertical, potência.
+   - **Carga:** efeito de treino aeróbico/anaeróbico e tipo de treino (`trainingEffectLabel`).
+   - **Calor:** ritmo vs temperatura.
+   - **Detalhe km a km** de uma corrida — exige baixar e decodificar o `.FIT` (dependência nova; perguntar antes).
 
 ## Como a API funciona (pesquisado na doc oficial)
 - Gerar chave em https://connect.garmin.com/app/settings/personalApiToken (validade 30/90/180/365 dias, mostrada uma única vez).
