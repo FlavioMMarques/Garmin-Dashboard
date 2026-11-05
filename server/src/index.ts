@@ -13,7 +13,7 @@ const envExample = fileURLToPath(new URL("../../.env.example", import.meta.url))
 try {
   process.loadEnvFile(envFile);
 } catch {
-  console.warn("[server] .env não encontrado — copie .env.example para .env");
+  console.warn("[server] Ainda sem .env — abra o painel e configure sua chave em Configuração.");
 }
 
 /** Re-read .env on each token exchange so a renewed key is picked up without a restart. */

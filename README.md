@@ -33,7 +33,7 @@ Abra um terminal **dentro da pasta do projeto** e rode:
 npm install
 ```
 
-Leva um ou dois minutos na primeira vez.
+Leva um ou dois minutos na primeira vez. Se aparecer um aviso sobre `install-scripts` do **esbuild**, pode ignorar: o painel funciona sem ele.
 
 ## Uso
 
@@ -66,14 +66,15 @@ O painel avisa que a chave foi recusada. Gere uma nova no Garmin Connect e cole 
 
 ## Problemas comuns
 
-| Sintoma                                             | O que fazer                                                                                                                 |
-| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `node` ou `npm` "não é reconhecido"                 | Feche e abra o terminal depois de instalar o Node.js. Se continuar, reinstale o Node marcando a opção de adicionar ao PATH. |
-| "A porta 8787 já está em uso"                       | O painel provavelmente já está aberto em outro terminal. Feche-o, ou escolha outra porta colocando `PORT=8790` no `.env`.   |
-| "A Garmin recusou essa chave"                       | Confira se copiou a chave inteira e se ela não expirou. Se não tiver certeza, gere uma nova.                                |
-| "Limite de requisições da Garmin"                   | Espere alguns minutos e tente de novo.                                                                                      |
-| Conta Garmin da China                               | Coloque `GARMIN_BASE_URL=https://personal.connectapi.garmin.cn` no `.env`.                                                  |
-| Página em branco ou "o app ainda não foi compilado" | Rode `npm start`, que compila antes de iniciar. Se persistir, rode `npm run build` e veja se aparece algum erro.            |
+| Sintoma                                             | O que fazer                                                                                                                                                   |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `node` ou `npm` "não é reconhecido"                 | Feche e abra o terminal depois de instalar o Node.js. Se continuar, reinstale o Node marcando a opção de adicionar ao PATH.                                   |
+| "A porta 8787 já está em uso"                       | O painel provavelmente já está aberto em outro terminal. Feche-o, ou escolha outra porta colocando `PORT=8790` no `.env`.                                     |
+| "A Garmin recusou essa chave"                       | Confira se copiou a chave inteira e se ela não expirou. Se não tiver certeza, gere uma nova.                                                                  |
+| Os gráficos só mostram dados a partir de certa data | O painel mostra o histórico que a Garmin disponibiliza pela Personal API para a sua conta. Escolha **Tudo** no seletor de período para ver tudo o que existe. |
+| "Limite de requisições da Garmin"                   | Espere alguns minutos e tente de novo.                                                                                                                        |
+| Conta Garmin da China                               | Coloque `GARMIN_BASE_URL=https://personal.connectapi.garmin.cn` no `.env`.                                                                                    |
+| Página em branco ou "o app ainda não foi compilado" | Rode `npm start`, que compila antes de iniciar. Se persistir, rode `npm run build` e veja se aparece algum erro.                                              |
 
 ---
 

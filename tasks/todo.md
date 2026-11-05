@@ -144,7 +144,7 @@
 ## D2: Modo produção com um comando
 **Description:** `npm run build` compila o web; `npm start` sobe o servidor servindo `web/dist` + `/api` em http://127.0.0.1:8787.
 **Acceptance criteria:**
-- [ ] Após `npm install && npm run build && npm start`, abrir a URL mostra o app funcionando
+- [x] Após `npm install && npm run build && npm start`, abrir a URL mostra o app funcionando
 **Dependencies:** D1 · **Scope:** S
 
 ## D3: README de instalação
@@ -152,7 +152,7 @@
 **Dependencies:** D1, D2 · **Scope:** S
 
 ## Checkpoint D
-- [ ] Instalação do zero seguindo só o README, numa pasta limpa
+- [x] Instalação do zero seguindo só o README, numa pasta limpa
 
 ## R5: Detalhe km a km (opcional)
 **Description:** clicar numa corrida → baixar `.FIT` (`/download-service/files/activity/{id}`), decodificar no servidor, ritmo/FC/cadência por km. **Perguntar antes** sobre a dependência de parser FIT.
