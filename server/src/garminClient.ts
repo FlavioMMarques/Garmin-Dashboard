@@ -48,25 +48,29 @@ export function createGarminClient({
 
   async function exchangeToken(): Promise<CachedToken> {
     if (!apiKey) throw new GarminError("missing_key", "GARMIN_API_KEY não configurada no .env");
+    // No JSON Accept header: the endpoint returns the JWT as text/plain and answers 406 otherwise.
     const res = await fetchFn(baseUrl + TOKEN_PATH, {
       method: "POST",
-      headers: { Authorization: `ApiKey ${apiKey}`, Accept: "application/json" },
+      headers: { Authorization: `ApiKey ${apiKey}` },
     });
     if (res.status === 401 || res.status === 403) {
-      throw new GarminError("auth_failed", "Chave da Personal API inválida ou expirada", res.status);
+      throw new GarminError(
+        "auth_failed",
+        "Chave da Personal API inválida ou expirada",
+        res.status,
+      );
     }
     if (!res.ok) throw upstreamError(res.status);
 
-    const body = (await res.json()) as Record<string, unknown>;
-    const value = body.access_token ?? body.accessToken ?? body.token;
-    if (typeof value !== "string") {
-      log(`resposta do token sem campo conhecido; campos: ${Object.keys(body).join(", ")}`);
+    const value = parseTokenBody(await res.text());
+    if (!value) {
+      log("resposta do token vazia ou em formato desconhecido");
       throw new GarminError("upstream", "Resposta inesperada do endpoint de token");
     }
-    const expiresIn = Number(body.expires_in ?? body.expiresIn);
-    const ttl = Number.isFinite(expiresIn) && expiresIn > 0 ? expiresIn * 1000 : DEFAULT_TTL_MS;
-    log(`novo token obtido (válido por ${Math.round(ttl / 60_000)} min)`);
-    return { value, expiresAt: now() + ttl };
+    const expMs = jwtExpiryMs(value);
+    const expiresAt = expMs ?? now() + DEFAULT_TTL_MS;
+    log(`novo token obtido (válido por ${Math.round((expiresAt - now()) / 60_000)} min)`);
+    return { value, expiresAt };
   }
 
   async function getToken(): Promise<string> {
@@ -76,7 +80,11 @@ export function createGarminClient({
     return token.value;
   }
 
-  async function request(path: string, query: Query | undefined, retried: boolean): Promise<Response> {
+  async function request(
+    path: string,
+    query: Query | undefined,
+    retried: boolean,
+  ): Promise<Response> {
     const url = new URL(baseUrl + path);
     for (const [k, v] of Object.entries(query ?? {})) {
       if (v !== undefined) url.searchParams.set(k, String(v));
@@ -105,6 +113,32 @@ export function createGarminClient({
       await getToken();
     },
   };
+}
+
+/** Token comes as a raw JWT string; JSON bodies are accepted as a fallback. */
+function parseTokenBody(raw: string): string | undefined {
+  const text = raw.trim();
+  if (!text.startsWith("{") && !text.startsWith('"')) return text || undefined;
+  try {
+    const body: unknown = JSON.parse(text);
+    if (typeof body === "string") return body || undefined;
+    const obj = body as Record<string, unknown>;
+    const value = obj.access_token ?? obj.accessToken ?? obj.token;
+    return typeof value === "string" && value ? value : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function jwtExpiryMs(token: string): number | undefined {
+  const payload = token.split(".")[1];
+  if (!payload) return undefined;
+  try {
+    const { exp } = JSON.parse(Buffer.from(payload, "base64url").toString()) as { exp?: unknown };
+    return typeof exp === "number" && exp > 0 ? exp * 1000 : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 function upstreamError(status: number): GarminError {

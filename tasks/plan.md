@@ -24,7 +24,7 @@ scaffold ─▶ garminClient (token) ─▶ activities slice
 ### Phase 1: Foundation
 - [x] T1 Scaffold do monorepo
 - [x] T2 Cliente Garmin (token + fetch autenticado) — risco maior, fazer cedo
-### Checkpoint A — precisa da chave real no `.env` para confirmar formato do token
+### Checkpoint A ✅ — token é JWT em text/plain (24h), `Authorization: Bearer`
 
 ### Phase 2: Core slices
 - [ ] T3 Atividades (rota + tela)
@@ -47,4 +47,4 @@ scaffold ─▶ garminClient (token) ─▶ activities slice
 | Formato real de `dailysummaries` v2 difere do schema | Médio | Gravar fixture anonimizada da resposta real antes de mapear |
 
 ## Open Questions
-- Nenhuma bloqueante; formato do token se resolve no Checkpoint A.
+- Nenhuma bloqueante.

@@ -23,7 +23,7 @@
 **Scope:** S
 
 ## Checkpoint A
-- [ ] Chave real no `.env`, `/api/status` = ok, formato do token confirmado
+- [x] Chave real no `.env`, `/api/status` = ok, formato do token confirmado (JWT em `text/plain`, `exp` 24h, uso `Bearer`; pedir JSON no `Accept` dá 406)
 
 ## Task 3: Atividades
 **Description:** `/api/activities?start&limit` → lista enxuta; tela com tabela paginada (data, tipo, nome, distância, duração, ritmo/velocidade, FC média, calorias).

@@ -11,7 +11,17 @@ function json(body: unknown, status = 200) {
   });
 }
 
-function setup(opts: { apiKey?: string; tokenBody?: unknown } = {}) {
+/** Fake JWT like the real endpoint returns (plain text, `exp` in seconds). */
+function jwt(id: string, expSeconds: number) {
+  const b64 = (o: object) => Buffer.from(JSON.stringify(o)).toString("base64url");
+  return `${b64({ alg: "none" })}.${b64({ jti: id, exp: expSeconds })}.sig`;
+}
+
+function text(body: string) {
+  return new Response(body, { headers: { "content-type": "text/plain" } });
+}
+
+function setup(opts: { apiKey?: string; tokenResponse?: () => Response } = {}) {
   let clock = 0;
   let tokenCount = 0;
   const dataResponses: Response[] = [];
@@ -19,9 +29,12 @@ function setup(opts: { apiKey?: string; tokenBody?: unknown } = {}) {
     const url = new URL(String(input));
     if (url.pathname === TOKEN_PATH) {
       tokenCount++;
-      return json(opts.tokenBody ?? { access_token: `tok${tokenCount}`, expires_in: 86400 });
+      return opts.tokenResponse?.() ?? text(jwt(`tok${tokenCount}`, (clock + 86400_000) / 1000));
     }
-    return dataResponses.shift() ?? json({ url: url.toString(), auth: new Headers(init?.headers).get("authorization") });
+    return (
+      dataResponses.shift() ??
+      json({ url: url.toString(), auth: new Headers(init?.headers).get("authorization") })
+    );
   });
   const client = createGarminClient({
     apiKey: "apiKey" in opts ? opts.apiKey : "secret",
@@ -46,6 +59,8 @@ describe("garminClient", () => {
     expect(String(url)).toBe(BASE + TOKEN_PATH);
     expect(init?.method).toBe("POST");
     expect(new Headers(init?.headers).get("authorization")).toBe("ApiKey secret");
+    // Garmin answers 406 when the token request asks for JSON.
+    expect(new Headers(init?.headers).get("accept") ?? "").not.toMatch(/json/);
   });
 
   it("calls data endpoints with a bearer token and query params", async () => {
@@ -54,7 +69,7 @@ describe("garminClient", () => {
       startDate: "2026-01-01",
       endDate: undefined,
     });
-    expect(res.auth).toBe("Bearer tok1");
+    expect(res.auth).toBe(`Bearer ${jwt("tok1", 86400)}`);
     expect(res.url).toBe(`${BASE}/sleep?startDate=2026-01-01`);
   });
 
@@ -73,8 +88,23 @@ describe("garminClient", () => {
     expect(tokenCalls()).toBe(2);
   });
 
-  it("accepts camelCase token fields and defaults to 24h validity", async () => {
-    const { client, tokenCalls, advance } = setup({ tokenBody: { accessToken: "camel" } });
+  it("uses the JWT exp claim for expiry", async () => {
+    const { client, tokenCalls, advance } = setup({
+      tokenResponse: () => text(jwt("short", 3600)),
+    });
+    await client.get("/a");
+    advance(50 * 60_000);
+    await client.get("/b");
+    expect(tokenCalls()).toBe(1);
+    advance(6 * 60_000);
+    await client.get("/c");
+    expect(tokenCalls()).toBe(2);
+  });
+
+  it("also accepts a JSON token body and defaults to 24h validity", async () => {
+    const { client, tokenCalls, advance } = setup({
+      tokenResponse: () => json({ accessToken: "camel" }),
+    });
     const res = await client.get<{ auth: string }>("/a");
     expect(res.auth).toBe("Bearer camel");
     advance(60 * 60_000);
@@ -86,7 +116,7 @@ describe("garminClient", () => {
     const { client, tokenCalls, queue } = setup();
     queue(json({}, 401));
     const res = await client.get<{ auth: string }>("/a");
-    expect(res.auth).toBe("Bearer tok2");
+    expect(res.auth).toBe(`Bearer ${jwt("tok2", 86400)}`);
     expect(tokenCalls()).toBe(2);
   });
 
@@ -104,9 +134,18 @@ describe("garminClient", () => {
     await expect(client.get("/a")).rejects.toBeInstanceOf(GarminError);
   });
 
+  it("rejects an empty token response", async () => {
+    const { client } = setup({ tokenResponse: () => text("  ") });
+    await expect(client.get("/a")).rejects.toMatchObject({ code: "upstream" });
+  });
+
   it("reports auth_failed when the key is rejected", async () => {
     const fetchMock = vi.fn(async () => json({ message: "invalid" }, 401));
-    const client = createGarminClient({ apiKey: "bad", baseUrl: BASE, fetch: fetchMock as typeof fetch });
+    const client = createGarminClient({
+      apiKey: "bad",
+      baseUrl: BASE,
+      fetch: fetchMock as typeof fetch,
+    });
     await expect(client.get("/a")).rejects.toMatchObject({ code: "auth_failed" });
   });
 });

@@ -107,6 +107,6 @@ export function formatPace(secondsPerKm: number): string {
 - [ ] `npm test` e `npm run typecheck` passam.
 
 ## Perguntas em aberto
-1. **Formato da resposta do token**: a doc não diz o nome do campo (`access_token`? `accessToken`?) nem se o uso é `Authorization: Bearer <token>`. Vou confirmar na primeira chamada real e ajustar.
+1. ~~**Formato da resposta do token**~~ — resolvido: o endpoint devolve o JWT cru em `text/plain` (validade no claim `exp`, 24h) e responde 406 se o `Accept` pedir JSON; chamadas usam `Authorization: Bearer <token>`.
 2. **Rate limit**: não documentado. Vou usar cache no servidor (TanStack Query + cache em memória por dia) para não exagerar nas chamadas.
 3. Unidades: km e min/km por padrão (ajustável depois).
