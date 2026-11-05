@@ -5,7 +5,14 @@ import { StatTile } from "../components/StatTile";
 import { paceDelta, percentDelta } from "../lib/delta";
 import { formatDistance, formatKmTotal, formatPace, formatTotalTime } from "../lib/format";
 import { PERIODS, periodRange, splitAt, summarize, toIsoDate, type Period } from "../lib/runStats";
-import { monthlyVolume, weeklyVolume, yearToDate } from "../lib/volume";
+import {
+  monthlyVolume,
+  weekRangeLabel,
+  weekStartsOnFrom,
+  weeklyVolume,
+  yearToDate,
+} from "../lib/volume";
+import { useProfile } from "../api/profile";
 import { paceSeries } from "../lib/pace";
 import { PaceChart } from "../components/charts/PaceChart";
 import { EfficiencyChart } from "../components/charts/EfficiencyChart";
@@ -44,6 +51,8 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
   );
   // Year-to-date compares with the whole previous calendar year, independent of the period.
   const todayIso = toIsoDate(today);
+  // Weeks follow the user's Garmin preference (e.g. Sunday–Saturday).
+  const weekStartsOn = weekStartsOnFrom(useProfile().data?.firstDayOfWeek);
   const year = today.getFullYear();
   const ytdQuery = useRuns(`${year - 1}-01-01`);
 
@@ -54,11 +63,11 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
 
   const charts = useMemo(
     () => ({
-      weeks: weeklyVolume(current, range.from, todayIso),
+      weeks: weeklyVolume(current, range.from, todayIso, weekStartsOn),
       months: monthlyVolume(current, range.from, todayIso),
       pace: paceSeries(current, PACE_WINDOW),
       efficiency: efficiencySeries(current, PACE_WINDOW),
-      zones: weeklyZones(current, range.from, todayIso),
+      zones: weeklyZones(current, range.from, todayIso, weekStartsOn),
       zoneShare: zoneShare(current),
       labels: labelCounts(current),
       bests: BEST_DISTANCES.map((d) => ({ distance: d.id, months: monthlyBests(current, d.id) })),
@@ -66,8 +75,15 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
     [current, range.from, todayIso],
   );
   const insights = useMemo(
-    () => generateInsights({ current, from: range.from, today: todayIso, window: PACE_WINDOW }),
-    [current, range.from, todayIso],
+    () =>
+      generateInsights({
+        current,
+        from: range.from,
+        today: todayIso,
+        window: PACE_WINDOW,
+        weekStartsOn,
+      }),
+    [current, range.from, todayIso, weekStartsOn],
   );
   const ytd = useMemo(
     () => (ytdQuery.data ? yearToDate(ytdQuery.data, todayIso) : null),
@@ -181,7 +197,11 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
 
           <h2 className="section-title">Volume</h2>
           <div className="chart-grid">
-            <WeeklyVolumeChart weeks={charts.weeks} refreshing={isPlaceholderData} />
+            <WeeklyVolumeChart
+              weeks={charts.weeks}
+              weekLabel={weekRangeLabel(weekStartsOn)}
+              refreshing={isPlaceholderData}
+            />
             <MonthlyVolumeChart months={charts.months} refreshing={isPlaceholderData} />
             {ytd && <YearToDateChart ytd={ytd} />}
           </div>

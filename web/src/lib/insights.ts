@@ -33,6 +33,8 @@ export interface InsightContext {
   today: string;
   /** Rolling window used by the trend charts. */
   window: number;
+  /** First day of the week (0 = Sunday); Monday when omitted. */
+  weekStartsOn?: number;
 }
 
 const pct = (n: number) => `${Math.round(n * 100)}%`;
@@ -222,7 +224,7 @@ export function recordsInsight({ current, today }: InsightContext): Insight | nu
 
 /** Weeks fully in the past (Mon–Sun before today). */
 function completeWeeks(ctx: InsightContext) {
-  return weeklyVolume(ctx.current, ctx.from, ctx.today).filter(
+  return weeklyVolume(ctx.current, ctx.from, ctx.today, ctx.weekStartsOn).filter(
     (w) => shiftDays(w.weekStart, 6) < ctx.today,
   );
 }
@@ -270,7 +272,7 @@ export function volumeRampInsight(ctx: InsightContext): Insight | null {
 
 /** Current streak of weeks with runs, or the longest break in the period. */
 export function consistencyInsight(ctx: InsightContext): Insight | null {
-  const weeks = weeklyVolume(ctx.current, ctx.from, ctx.today);
+  const weeks = weeklyVolume(ctx.current, ctx.from, ctx.today, ctx.weekStartsOn);
   const firstRun = weeks.findIndex((w) => w.runs > 0);
   if (firstRun < 0) return null;
   const relevant = weeks.slice(firstRun);
