@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { monthlyVolume, weekStart, weeklyVolume, yearToDate } from "./volume";
+import {
+  monthlyVolume,
+  weekRangeLabel,
+  weekStart,
+  weekStartsOnFrom,
+  weeklyVolume,
+  yearToDate,
+} from "./volume";
 
 type R = { startLocal: string; distanceM: number | null };
 const r = (startLocal: string, km: number): R => ({ startLocal, distanceM: km * 1000 });
@@ -80,5 +87,36 @@ describe("yearToDate", () => {
     const ytd = yearToDate([r("2026-01-05 07:00:00", 12)], today);
     expect(ytd.hasPrevious).toBe(false);
     expect(ytd.rows[0]!.previous).toBeNull();
+  });
+});
+
+describe("week start preference", () => {
+  it("supports weeks starting on Sunday", () => {
+    expect(weekStart("2026-11-05", 0)).toBe("2026-11-01"); // Thursday → Sunday
+    expect(weekStart("2026-11-01", 0)).toBe("2026-11-01"); // Sunday
+    expect(weekStart("2026-11-07", 0)).toBe("2026-11-01"); // Saturday
+  });
+
+  it("maps Garmin day names, defaulting to Monday", () => {
+    expect(weekStartsOnFrom("sunday")).toBe(0);
+    expect(weekStartsOnFrom("monday")).toBe(1);
+    expect(weekStartsOnFrom("saturday")).toBe(6);
+    expect(weekStartsOnFrom(null)).toBe(1);
+    expect(weekStartsOnFrom("whatever")).toBe(1);
+  });
+
+  it("labels the week range in Portuguese", () => {
+    expect(weekRangeLabel(0)).toBe("domingo a sábado");
+    expect(weekRangeLabel(1)).toBe("segunda a domingo");
+  });
+
+  it("groups weekly volume by the chosen start day", () => {
+    const weeks = weeklyVolume(
+      [r("2026-11-01 07:00:00", 5), r("2026-11-02 07:00:00", 5)], // Sun + Mon
+      "2026-11-01",
+      "2026-11-07",
+      0,
+    );
+    expect(weeks).toEqual([{ weekStart: "2026-11-01", km: 10, runs: 2, longestKm: 5 }]);
   });
 });

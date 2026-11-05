@@ -15,11 +15,28 @@ function parseDay(day: string): Date {
 const addDays = (d: Date, n: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
 const km = (r: Run) => (r.distanceM ?? 0) / 1000;
 
-/** Monday of the ISO week containing `day` (YYYY-MM-DD). */
-export function weekStart(day: string): string {
+/** Day the week starts on: 0 = Sunday … 6 = Saturday (Date#getDay numbering). */
+export type WeekStartDay = number;
+
+const DAY_NAMES = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+const DAY_NAMES_PT = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
+
+/** Garmin's firstDayOfWeek name → WeekStartDay; Monday (ISO) when unknown. */
+export function weekStartsOnFrom(dayName: string | null | undefined): WeekStartDay {
+  const i = DAY_NAMES.indexOf(dayName?.toLowerCase() ?? "");
+  return i >= 0 ? i : 1;
+}
+
+/** e.g. "domingo a sábado". */
+export function weekRangeLabel(startsOn: WeekStartDay): string {
+  return `${DAY_NAMES_PT[startsOn]} a ${DAY_NAMES_PT[(startsOn + 6) % 7]}`;
+}
+
+/** First day of the week containing `day` (YYYY-MM-DD); Monday (ISO week) by default. */
+export function weekStart(day: string, startsOn: WeekStartDay = 1): string {
   const d = parseDay(day);
-  const sinceMonday = (d.getDay() + 6) % 7;
-  return toIsoDate(addDays(d, -sinceMonday));
+  const back = (d.getDay() - startsOn + 7) % 7;
+  return toIsoDate(addDays(d, -back));
 }
 
 export interface WeekVolume {
@@ -30,16 +47,21 @@ export interface WeekVolume {
 }
 
 /** One entry per week from `from` (or the first run) to `to`; weeks without runs are zero. */
-export function weeklyVolume(runs: Run[], from: string | undefined, to: string): WeekVolume[] {
+export function weeklyVolume(
+  runs: Run[],
+  from: string | undefined,
+  to: string,
+  startsOn: WeekStartDay = 1,
+): WeekVolume[] {
   const first = from ?? runs[0]?.startLocal;
   if (!first) return [];
   const byWeek = new Map<string, WeekVolume>();
-  for (let d = parseDay(weekStart(first)); toIsoDate(d) <= to; d = addDays(d, 7)) {
+  for (let d = parseDay(weekStart(first, startsOn)); toIsoDate(d) <= to; d = addDays(d, 7)) {
     const key = toIsoDate(d);
     byWeek.set(key, { weekStart: key, km: 0, runs: 0, longestKm: 0 });
   }
   for (const r of runs) {
-    const week = byWeek.get(weekStart(r.startLocal));
+    const week = byWeek.get(weekStart(r.startLocal, startsOn));
     if (!week) continue;
     week.km += km(r);
     week.runs += 1;

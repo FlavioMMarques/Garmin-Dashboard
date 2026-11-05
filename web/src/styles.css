@@ -495,10 +495,6 @@ input[type="date"] {
   background: var(--series-1);
   color: #ffffff;
 }
-.insight-tone {
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-}
 .insight-title {
   font-size: var(--font-size-md);
   margin: 0 0 var(--space-1);
@@ -529,4 +525,26 @@ input[type="date"] {
   margin-top: var(--space-1);
   border-color: currentColor;
   background: transparent;
+}
+
+/* Profile */
+.profile-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-left: auto;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+.profile-badge img {
+  border-radius: 50%;
+  object-fit: cover;
+}
+.insight-groups {
+  display: grid;
+  gap: var(--space-4);
+}
+.insight-group-title {
+  font-size: var(--font-size-md);
+  margin: 0 0 var(--space-2);
 }

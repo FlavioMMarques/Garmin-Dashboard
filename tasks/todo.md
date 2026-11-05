@@ -122,9 +122,16 @@
 ## P1: Perfil no topo
 **Description:** `/api/profile` devolve só `fullName`, `photoUrl` (da atividade mais recente) e preferências (`locale`, `measurementSystem`, `timeZone`, `firstDayOfWeek`) de `/userprofile-service/userprofile/settings`; cache 1 h. Topo mostra foto + "Olá, Nome".
 **Acceptance criteria:**
-- [ ] Nenhum outro campo do dono sai do servidor (teste)
-- [ ] Sem atividades → topo sem nome, sem erro
+- [x] Nenhum outro campo do dono sai do servidor (teste)
+- [x] Sem atividades → topo sem nome, sem erro
 **Dependencies:** T2 · **Scope:** S
+
+## R9: Máximo de insights de corrida (pedido em 2026-11-05: "o máximo de insights possíveis, de tudo")
+**Description:** novas regras sobre dados que já temos: manhã × noite, esteira × rua, progressão e peso do longão, treinos fortes em dias seguidos, pouco estímulo anaeróbico, relevo, melhor mês, frequência semanal, cadência e tempo de contato, VDOT vs período anterior. Painel mostra todos os insights agrupados (Atenção / Pontos positivos / Observações), não só 6.
+**Acceptance criteria:**
+- [x] Cada regra nova tem teste que dispara e teste que não dispara
+- [x] Painel mostra todos os insights, agrupados por tom
+**Dependencies:** R7, R8 · **Scope:** M
 
 ## D1: Tela de Configuração
 **Description:** rota `#/configuracao`: status (chave configurada? válida?), campo para colar a chave → `POST /api/settings/key` troca a chave por token **antes** de gravar no `.env` (cria a partir do `.env.example` se faltar) e nunca devolve a chave. Sem chave, o app abre direto essa tela. Proteções: Host = 127.0.0.1/localhost, Origin do próprio app, `Content-Type: application/json`.

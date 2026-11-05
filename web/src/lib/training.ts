@@ -1,5 +1,5 @@
 import { median, quantile } from "./pace";
-import { weeklyVolume, weekStart } from "./volume";
+import { weeklyVolume, weekStart, type WeekStartDay } from "./volume";
 
 type Zones = [number, number, number, number, number];
 
@@ -21,15 +21,20 @@ export interface WeekZones {
 }
 
 /** HR-zone seconds per ISO week (same weeks as the volume chart; empty weeks are zero). */
-export function weeklyZones(runs: Run[], from: string | undefined, to: string): WeekZones[] {
+export function weeklyZones(
+  runs: Run[],
+  from: string | undefined,
+  to: string,
+  startsOn: WeekStartDay = 1,
+): WeekZones[] {
   const weeks = new Map<string, WeekZones>(
-    weeklyVolume(runs, from, to).map((w) => [
+    weeklyVolume(runs, from, to, startsOn).map((w) => [
       w.weekStart,
       { weekStart: w.weekStart, zones: [0, 0, 0, 0, 0], totalS: 0 },
     ]),
   );
   for (const r of runs) {
-    const week = r.hrZonesS && weeks.get(weekStart(r.startLocal));
+    const week = r.hrZonesS && weeks.get(weekStart(r.startLocal, startsOn));
     if (!week) continue;
     r.hrZonesS!.forEach((s, i) => {
       week.zones[i]! += s;

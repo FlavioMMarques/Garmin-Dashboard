@@ -43,7 +43,8 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 ### Checkpoint I ✅ — insights revisados pelo usuário (2026-11-05)
 - [x] T8 Estados de erro (chave ausente/expirada) — README movido para D3
 ### Phase 2c: Perfil e distribuição (pedido do usuário, 2026-11-05)
-- [ ] P1 `/api/profile` (nome + foto + preferências) e saudação no topo
+- [x] P1 `/api/profile` (nome + foto + preferências) e saudação no topo; semanas seguem `firstDayOfWeek`
+- [x] R9 Máximo de insights de corrida (novas regras + painel mostra todos, agrupados)
 - [ ] D1 Tela de Configuração: status da chave + colar nova chave (validada, gravada no `.env`, nunca devolvida); assistente na primeira execução
 - [ ] D2 Modo produção: `npm start` serve o web compilado pelo próprio servidor (uma porta, um comando)
 - [ ] D3 README de instalação para outras pessoas (Node, baixar, `npm install`, `npm start`, gerar chave)
@@ -54,6 +55,7 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 - [ ] T4 Saúde diária (rota + tela)
 - [ ] T5 Sono (blocos de datas + rota + tela)
 - [ ] T6 Tendências de saúde (7/30/90 dias, gráficos)
+- [ ] H1 Insights cruzando saúde e treino (sono, Body Battery, FC repouso, HRV × desempenho)
 - ~~T7 Volume semanal de atividades~~ → absorvida pela R2
 - (T8 antecipada para depois do Checkpoint I)
 ### Checkpoint C — critérios de sucesso do SPEC

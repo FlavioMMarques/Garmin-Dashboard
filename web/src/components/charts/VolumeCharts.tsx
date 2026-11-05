@@ -22,9 +22,12 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 
 export function WeeklyVolumeChart({
   weeks,
+  weekLabel = "segunda a domingo",
   refreshing,
 }: {
   weeks: WeekVolume[];
+  /** e.g. "domingo a sábado", from the user's Garmin preference. */
+  weekLabel?: string;
   refreshing?: boolean;
 }) {
   const theme = useChartTheme();
@@ -33,7 +36,7 @@ export function WeeklyVolumeChart({
   return (
     <ChartCard
       title="Distância por semana (km)"
-      subtitle={`Média de ${formatKm1(avg)} por semana · semanas de segunda a domingo`}
+      subtitle={`Média de ${formatKm1(avg)} por semana · semanas de ${weekLabel}`}
       refreshing={refreshing}
       table={{
         columns: ["Semana", "Distância", "Corridas", "Maior corrida"],

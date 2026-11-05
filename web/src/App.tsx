@@ -1,4 +1,6 @@
 import { useHashRoute } from "./useHashRoute";
+import { useProfile } from "./api/profile";
+import { ProfileBadge } from "./components/ProfileBadge";
 import { ActivitiesPage } from "./pages/ActivitiesPage";
 import { RunningPage } from "./pages/RunningPage";
 import { DailyPage } from "./pages/DailyPage";
@@ -19,6 +21,7 @@ const ROUTES = Object.keys(PAGES) as Route[];
 export function App() {
   const route = useHashRoute(ROUTES, "corrida");
   const { Component } = PAGES[route];
+  const { data: profile } = useProfile();
 
   return (
     <div className="shell">
@@ -35,6 +38,7 @@ export function App() {
             ))}
           </ul>
         </nav>
+        <ProfileBadge fullName={profile?.fullName} photoUrl={profile?.photoUrl} />
       </header>
       <main className="content">
         <Component />

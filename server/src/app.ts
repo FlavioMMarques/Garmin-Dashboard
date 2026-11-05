@@ -3,6 +3,7 @@ import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { GarminError, type GarminClient, type GarminErrorCode } from "./garminClient.js";
 import { activitiesRoutes } from "./routes/activities.js";
 import { runsRoutes } from "./routes/runs.js";
+import { profileRoutes } from "./routes/profile.js";
 
 export interface AppOptions {
   now?: () => number;
@@ -35,6 +36,7 @@ export function createApp(garmin: GarminClient, options: AppOptions = {}) {
 
   app.route("/", activitiesRoutes(garmin));
   app.route("/", runsRoutes(garmin, options));
+  app.route("/", profileRoutes(garmin, options));
 
   return app;
 }
