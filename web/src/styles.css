@@ -495,10 +495,6 @@ input[type="date"] {
   background: var(--series-1);
   color: #ffffff;
 }
-.insight-tone {
-  font-size: var(--font-size-sm);
-  color: var(--text-muted);
-}
 .insight-title {
   font-size: var(--font-size-md);
   margin: 0 0 var(--space-1);
@@ -543,4 +539,12 @@ input[type="date"] {
 .profile-badge img {
   border-radius: 50%;
   object-fit: cover;
+}
+.insight-groups {
+  display: grid;
+  gap: var(--space-4);
+}
+.insight-group-title {
+  font-size: var(--font-size-md);
+  margin: 0 0 var(--space-2);
 }

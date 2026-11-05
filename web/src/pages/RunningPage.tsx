@@ -78,12 +78,13 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
     () =>
       generateInsights({
         current,
+        previous: period === "all" ? [] : previous,
         from: range.from,
         today: todayIso,
         window: PACE_WINDOW,
         weekStartsOn,
       }),
-    [current, range.from, todayIso, weekStartsOn],
+    [current, previous, period, range.from, todayIso, weekStartsOn],
   );
   const ytd = useMemo(
     () => (ytdQuery.data ? yearToDate(ytdQuery.data, todayIso) : null),

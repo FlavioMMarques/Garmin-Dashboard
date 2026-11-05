@@ -1,5 +1,5 @@
 import type { RunSummary } from "../api/runs";
-import { trainingPaces } from "./daniels";
+import { predictRaceTime, trainingPaces } from "./daniels";
 import { percentDelta } from "./delta";
 import { formatDayMonth, formatDecimal, formatDuration, formatKm1, formatPace } from "./format";
 import { BUCKETS, median, paceSeries, paceTrend } from "./pace";
@@ -11,7 +11,7 @@ import {
   vdotFromRuns,
 } from "./performance";
 import { toIsoDate } from "./runStats";
-import { heatBins, labelCounts, zoneShare } from "./training";
+import { heatBins, labelCounts, metricSeries, zoneShare } from "./training";
 import { monthlyVolume, weeklyVolume } from "./volume";
 
 export type InsightTone = "attention" | "positive" | "info";
@@ -27,6 +27,8 @@ export interface Insight {
 export interface InsightContext {
   /** Runs in the selected period, oldest first. */
   current: RunSummary[];
+  /** Runs in the previous window of equal length (for period-over-period comparisons). */
+  previous?: RunSummary[];
   /** Period start (YYYY-MM-DD); undefined = whole history. */
   from: string | undefined;
   /** Today (YYYY-MM-DD). */
@@ -444,7 +446,7 @@ export function anaerobicInsight({ current }: InsightContext): Insight | null {
     id: "anaerobic",
     tone: "info",
     title: "Quase nenhum estímulo anaeróbico",
-    detail: `Só ${some} de ${withTe.length} corridas tiveram efeito anaeróbico de 1,0 ou mais, segundo a Garmin. Tiros curtos e rápidos (ex.: 8 × 200 m) trabalham velocidade e economia de corrida.`,
+    detail: `${some === 0 ? `Nenhuma das ${withTe.length} corridas teve` : `Só ${some} de ${withTe.length} corridas tiveram`} efeito anaeróbico de 1,0 ou mais, segundo a Garmin. Tiros curtos e rápidos (ex.: 8 × 200 m) trabalham velocidade e economia de corrida.`,
   };
 }
 
@@ -509,6 +511,80 @@ export function frequencyInsight(ctx: InsightContext): Insight | null {
   return null;
 }
 
+// ——— R9: progress rules ———
+
+/** First-full-window vs latest rolling median of a per-run metric (needs two windows). */
+function metricChange(
+  ctx: InsightContext,
+  pick: (r: RunSummary) => number | null,
+): { first: number; last: number } | null {
+  const points = metricSeries(ctx.current, pick, ctx.window);
+  if (points.length < 2 * ctx.window) return null;
+  return efficiencyTrend(points, ctx.window);
+}
+
+/** Cadence trend: +2 spm or more is positive, −3 or less is noted. */
+export function cadenceInsight(ctx: InsightContext): Insight | null {
+  const t = metricChange(ctx, (r) => r.cadenceSpm);
+  if (!t) return null;
+  const diff = t.last - t.first;
+  const numbers = `${Math.round(t.first)} → ${Math.round(t.last)} ppm (mediana das últimas ${ctx.window})`;
+  if (diff >= 2) {
+    return {
+      id: "cadence",
+      tone: "positive",
+      title: "Sua cadência subiu",
+      detail: `Passos por minuto: ${numbers}. Cadência mais alta costuma vir com passadas mais curtas e menos impacto.`,
+    };
+  }
+  if (diff <= -3) {
+    return {
+      id: "cadence",
+      tone: "info",
+      title: "Sua cadência caiu",
+      detail: `Passos por minuto: ${numbers}. Corridas mais lentas também baixam a cadência — compare corridas de ritmo parecido.`,
+    };
+  }
+  return null;
+}
+
+/** Ground contact time trend: 5 ms shorter or more is positive. */
+export function contactTimeInsight(ctx: InsightContext): Insight | null {
+  const t = metricChange(ctx, (r) => r.groundContactMs);
+  if (!t || t.first - t.last < 5) return null;
+  return {
+    id: "contact-time",
+    tone: "positive",
+    title: "Menos tempo de contato com o solo",
+    detail: `${Math.round(t.first)} → ${Math.round(t.last)} ms (mediana das últimas ${ctx.window}). Um contato mais curto costuma indicar uma passada mais reativa e econômica.`,
+  };
+}
+
+/** Estimated VDOT vs the previous window of equal length (±1 point). */
+export function vdotProgressInsight({ current, previous }: InsightContext): Insight | null {
+  if (!previous?.length) return null;
+  const now = vdotFromRuns(current);
+  const before = vdotFromRuns(previous);
+  if (!now || !before) return null;
+  const diff = now.value - before.value;
+  if (Math.abs(diff) < 1) return null;
+  const fiveK = (v: number) => formatDuration(predictRaceTime(v, 5000));
+  const numbers = `VDOT estimado ${diff > 0 ? "subiu" : "caiu"} de ${formatDecimal(before.value, 1)} para ${formatDecimal(now.value, 1)} em relação ao período anterior — equivale a um 5 km de ${fiveK(before.value)} para ${fiveK(now.value)}.`;
+  return diff > 0
+    ? {
+        id: "vdot-progress",
+        tone: "positive",
+        title: "Seu condicionamento melhorou",
+        detail: numbers,
+      }
+    : {
+        id: "vdot-progress",
+        tone: "info",
+        title: "Seu VDOT estimado caiu",
+        detail: `${numbers} Pode ser só falta de esforços fortes recentes para medir.`,
+      };
+}
+
 const RULES = [
   intensityInsight,
   easyPaceInsight,
@@ -527,15 +603,16 @@ const RULES = [
   treadmillInsight,
   anaerobicInsight,
   elevationInsight,
+  vdotProgressInsight,
+  cadenceInsight,
+  contactTimeInsight,
 ];
 
 const TONE_ORDER: Record<InsightTone, number> = { attention: 0, positive: 1, info: 2 };
-export const MAX_INSIGHTS = 6;
 
-/** All rules that fire, attention first, then positive, then info; at most MAX_INSIGHTS. */
+/** Every rule that fires: attention first, then positive, then info. */
 export function generateInsights(ctx: InsightContext): Insight[] {
   return RULES.map((rule) => rule(ctx))
     .filter((i): i is Insight => i !== null)
-    .sort((a, b) => TONE_ORDER[a.tone] - TONE_ORDER[b.tone])
-    .slice(0, MAX_INSIGHTS);
+    .sort((a, b) => TONE_ORDER[a.tone] - TONE_ORDER[b.tone]);
 }

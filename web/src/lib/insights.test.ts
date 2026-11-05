@@ -231,7 +231,7 @@ describe("heatInsight", () => {
 });
 
 describe("generateInsights", () => {
-  it("orders attention → positive → info and caps the list", () => {
+  it("orders attention → positive → info", () => {
     const runs = series(30, "2026-08-01", 3, (i) => ({
       hrZonesS: [100, 400, 1000, 500, 0],
       avgHr: i < 15 ? 160 : 145,
@@ -241,6 +241,5 @@ describe("generateInsights", () => {
     const order = { attention: 0, positive: 1, info: 2 };
     const tones = insights.map((i) => order[i.tone]);
     expect(tones).toEqual([...tones].sort((a, b) => a - b));
-    expect(insights.length).toBeLessThanOrEqual(6);
   });
 });
