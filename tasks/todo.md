@@ -72,8 +72,8 @@
 ## R4: Zonas + dinâmica + carga + calor
 **Description:** tempo por zona de FC por semana (barras empilhadas, % leve vs forte); tendências de cadência, passada, oscilação, contato, razão vertical, potência (pequenos múltiplos); TE aeróbico/anaeróbico por corrida e distribuição de `trainingEffectLabel`; dispersão ritmo × temperatura.
 **Acceptance criteria:**
-- [ ] Corridas sem o dado (ex.: esteira sem potência) ficam fora daquele gráfico, sem quebrar
-- [ ] Zonas somam o tempo total das corridas com FC
+- [x] Corridas sem o dado (ex.: esteira sem potência) ficam fora daquele gráfico, sem quebrar
+- [x] Zonas somam o tempo total das corridas com FC
 **Verification:** testes das agregações; manual
 **Dependencies:** R1
 **Files:** web/src/lib/runStats.ts, web/src/components/charts/*, RunningPage.tsx
