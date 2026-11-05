@@ -3,6 +3,8 @@ import {
   activityTypeLabel,
   formatDistance,
   formatDuration,
+  formatKmTotal,
+  formatTotalTime,
   formatLocalDateTime,
   formatPace,
   formatSpeed,
@@ -78,5 +80,16 @@ describe("activityTypeLabel", () => {
     expect(activityTypeLabel("running")).toBe("Corrida");
     expect(activityTypeLabel("treadmill_running")).toBe("Esteira");
     expect(activityTypeLabel("some_new_sport")).toBe("some new sport");
+  });
+});
+
+describe("tile totals", () => {
+  it("formats km totals with precision that fits the size", () => {
+    expect(formatKmTotal(412_345)).toBe("412 km");
+    expect(formatKmTotal(68_420)).toBe("68,4 km");
+  });
+  it("formats total time in hours and minutes", () => {
+    expect(formatTotalTime(137_520)).toBe("38 h 12 min");
+    expect(formatTotalTime(2700)).toBe("45 min");
   });
 });

@@ -25,6 +25,8 @@
   --accent: #0b6bcb;
   --danger-bg: #fdecec;
   --danger-text: #8a1c1c;
+  --good-text: #006300;
+  --bad-text: #b42c2c;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -37,6 +39,8 @@
     --accent: #5aa7f0;
     --danger-bg: #3a1a1a;
     --danger-text: #f3b4b4;
+    --good-text: #0ca30c;
+    --bad-text: #e66767;
   }
 }
 
@@ -228,4 +232,44 @@ input[type="date"] {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* Stat tiles */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: var(--space-3);
+}
+.stat-tile {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+}
+.stat-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+.stat-value {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: var(--space-1) 0;
+}
+.stat-delta {
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+.stat-delta-label {
+  display: block;
+  color: var(--text-muted);
+}
+.tone-good {
+  color: var(--good-text);
+}
+.tone-bad {
+  color: var(--bad-text);
+}
+.tone-neutral {
+  color: var(--text-muted);
 }

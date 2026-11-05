@@ -76,3 +76,17 @@ const TYPE_LABELS: Record<string, string> = {
 export function activityTypeLabel(typeKey: string): string {
   return TYPE_LABELS[typeKey] ?? typeKey.replaceAll("_", " ");
 }
+
+/** Totals for tiles: "412 km" from 100 km up, "68,4 km" below. */
+export function formatKmTotal(meters: number): string {
+  const km = meters / 1000;
+  return `${(km >= 100 ? decimal(0) : kmh1).format(km)} km`;
+}
+
+/** 137520 → "38 h 12 min"; 2700 → "45 min". */
+export function formatTotalTime(seconds: number): string {
+  const totalMin = Math.round(seconds / 60);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return h > 0 ? `${h} h ${pad2(m)} min` : `${m} min`;
+}
