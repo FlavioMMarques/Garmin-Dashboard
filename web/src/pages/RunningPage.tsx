@@ -12,6 +12,8 @@ import { efficiencySeries, monthlyBests, BEST_DISTANCES } from "../lib/performan
 import { BestsChart } from "../components/charts/BestsChart";
 import { BestEffortTiles } from "../components/BestEffortTiles";
 import { TrainingPaces } from "../components/TrainingPaces";
+import { InsightsPanel } from "../components/InsightsPanel";
+import { generateInsights } from "../lib/insights";
 import { ZonesChart } from "../components/charts/ZonesChart";
 import { labelCounts, weeklyZones, zoneShare } from "../lib/training";
 import { TrainingTypesChart } from "../components/charts/TrainingTypesChart";
@@ -58,6 +60,10 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
       labels: labelCounts(current),
       bests: BEST_DISTANCES.map((d) => ({ distance: d.id, months: monthlyBests(current, d.id) })),
     }),
+    [current, range.from, todayIso],
+  );
+  const insights = useMemo(
+    () => generateInsights({ current, from: range.from, today: todayIso, window: PACE_WINDOW }),
     [current, range.from, todayIso],
   );
   const ytd = useMemo(
@@ -136,6 +142,9 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
               deltaLabel={vs}
             />
           </div>
+          <h2 className="section-title">O que seus treinos mostram</h2>
+          <InsightsPanel insights={insights} />
+
           <h2 className="section-title">Evolução</h2>
           <div className="chart-grid">
             <PaceChart points={charts.pace} window={PACE_WINDOW} refreshing={isPlaceholderData} />
