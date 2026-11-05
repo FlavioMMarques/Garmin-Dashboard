@@ -12,10 +12,10 @@ const run = (id: number, km: number, secPerKm: number) => ({
 
 describe("PaceChart", () => {
   it("summarizes the trend per distance bucket and lists only buckets with runs", () => {
-    const points = paceSeries([run(1, 5, 360), run(2, 10, 330), run(3, 5, 300)], 2);
-    render(<PaceChart points={points} window={2} />);
+    const points = paceSeries([run(1, 5, 360), run(2, 10, 330), run(3, 5, 300)], 1);
+    render(<PaceChart points={points} window={1} />);
 
-    expect(screen.getByText(/Até 8 km 6:00 → 5:30/)).toBeInTheDocument();
+    expect(screen.getByText(/Até 8 km 6:00 → 5:00/)).toBeInTheDocument();
     expect(screen.getByText(/8–15 km 5:30 → 5:30/)).toBeInTheDocument();
 
     const legend = within(screen.getByRole("list"));

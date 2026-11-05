@@ -17,6 +17,7 @@ import {
   type PacePoint,
 } from "../../lib/pace";
 import { ChartCard, ChartLegend, TooltipBox } from "./ChartCard";
+import { ringedDot } from "./marks";
 import { useChartTheme, type ChartTheme } from "./theme";
 
 const HEIGHT = 260;
@@ -52,7 +53,7 @@ export function PaceChart({
   refreshing?: boolean;
 }) {
   const theme = useChartTheme();
-  const trends = paceTrend(points);
+  const trends = paceTrend(points, window);
   const rows: Row[] = points.map((p) => ({ ...p, t: toTime(p.startLocal) }));
   const byBucket = trends.map((tr) => ({
     ...tr,
@@ -146,21 +147,7 @@ export function PaceChart({
               data={b.rows}
               dataKey="secPerKm"
               isAnimationActive={false}
-              shape={(props: { cx?: number; cy?: number }) => (
-                <g>
-                  {/* 24px hit target, 8px dot with a 2px surface ring */}
-                  <circle cx={props.cx} cy={props.cy} r={12} fill="transparent" />
-                  <circle
-                    cx={props.cx}
-                    cy={props.cy}
-                    r={4}
-                    fill={b.color}
-                    fillOpacity={0.5}
-                    stroke={theme.surface}
-                    strokeWidth={2}
-                  />
-                </g>
-              )}
+              shape={ringedDot(b.color, theme.surface)}
             />
           ))}
           {byBucket.map((b) => (

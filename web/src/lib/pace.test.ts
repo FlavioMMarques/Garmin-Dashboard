@@ -38,8 +38,8 @@ describe("paceSeries", () => {
 describe("paceTrend", () => {
   it("reports first and last rolling pace per bucket that has runs", () => {
     const series = paceSeries([run(1, 5, 360), run(2, 10, 330), run(3, 5, 340), run(4, 5, 320)], 2);
-    expect(paceTrend(series)).toEqual([
-      { bucket: "short", count: 3, firstSecPerKm: 360, lastSecPerKm: 330 },
+    expect(paceTrend(series, 2)).toEqual([
+      { bucket: "short", count: 3, firstSecPerKm: 350, lastSecPerKm: 330 },
       { bucket: "medium", count: 1, firstSecPerKm: 330, lastSecPerKm: 330 },
     ]);
   });
@@ -75,5 +75,18 @@ describe("paceDomain", () => {
   it("rounds to 15-second steps", () => {
     const series = paceSeries([run(1, 5, 301), run(2, 5, 359)], 5);
     expect(paceDomain(series).domain).toEqual([285, 375]);
+  });
+});
+
+describe("paceTrend start", () => {
+  it("starts at the first full window, not at a single run", () => {
+    const series = paceSeries([run(1, 5, 300), run(2, 5, 360), run(3, 5, 360), run(4, 5, 330)], 3);
+    // first full window = runs 1–3 → median 360 (not run 1 alone = 300)
+    expect(paceTrend(series, 3)[0]).toMatchObject({ firstSecPerKm: 360, lastSecPerKm: 360 });
+  });
+
+  it("falls back to the last point when there are fewer runs than the window", () => {
+    const series = paceSeries([run(1, 5, 300), run(2, 5, 360)], 5);
+    expect(paceTrend(series, 5)[0]).toMatchObject({ firstSecPerKm: 330, lastSecPerKm: 330 });
   });
 });

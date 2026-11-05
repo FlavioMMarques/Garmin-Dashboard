@@ -70,13 +70,16 @@ export function paceSeries(runs: Run[], window = 5): PacePoint[] {
 export interface PaceTrend {
   bucket: DistanceBucket;
   count: number;
-  /** Rolling pace at the first and the last run of the bucket. */
+  /** Rolling pace at the first full window (or the last run if there are fewer) and at the end. */
   firstSecPerKm: number;
   lastSecPerKm: number;
 }
 
-/** Start vs end of the trailing average, for buckets that have runs (in BUCKETS order). */
-export function paceTrend(points: PacePoint[]): PaceTrend[] {
+/**
+ * Start vs end of the rolling median, per bucket with runs (BUCKETS order). The start is
+ * the first point whose window is full, so a single early run can't set the baseline.
+ */
+export function paceTrend(points: PacePoint[], window: number): PaceTrend[] {
   return BUCKETS.flatMap(({ id }) => {
     const inBucket = points.filter((p) => p.bucket === id);
     if (inBucket.length === 0) return [];
@@ -84,7 +87,7 @@ export function paceTrend(points: PacePoint[]): PaceTrend[] {
       {
         bucket: id,
         count: inBucket.length,
-        firstSecPerKm: inBucket[0]!.rollingSecPerKm,
+        firstSecPerKm: inBucket[Math.min(window, inBucket.length) - 1]!.rollingSecPerKm,
         lastSecPerKm: inBucket.at(-1)!.rollingSecPerKm,
       },
     ];
