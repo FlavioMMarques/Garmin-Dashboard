@@ -139,6 +139,30 @@ describe("garminClient", () => {
     await expect(client.get("/a")).rejects.toMatchObject({ code: "upstream" });
   });
 
+  it("reads the key again on each token exchange, so a renewed key works without restart", async () => {
+    let key: string | undefined = undefined;
+    const fetchMock = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+      const url = new URL(String(input));
+      if (url.pathname === TOKEN_PATH) {
+        const auth = new Headers(init?.headers).get("authorization");
+        return auth === "ApiKey new" ? text(jwt("fresh", 86400)) : json({}, 401);
+      }
+      return json({ ok: true });
+    });
+    const client = createGarminClient({
+      apiKey: () => key,
+      baseUrl: BASE,
+      fetch: fetchMock as typeof fetch,
+      now: () => 0,
+    });
+
+    await expect(client.get("/a")).rejects.toMatchObject({ code: "missing_key" });
+    key = "expired";
+    await expect(client.get("/a")).rejects.toMatchObject({ code: "auth_failed" });
+    key = "new";
+    await expect(client.get("/a")).resolves.toEqual({ ok: true });
+  });
+
   it("reports auth_failed when the key is rejected", async () => {
     const fetchMock = vi.fn(async () => json({ message: "invalid" }, 401));
     const client = createGarminClient({

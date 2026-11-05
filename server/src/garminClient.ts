@@ -24,7 +24,8 @@ export interface GarminClient {
 }
 
 interface Options {
-  apiKey: string | undefined;
+  /** The key, or a getter re-read on every token exchange (so a renewed key needs no restart). */
+  apiKey: string | undefined | (() => string | undefined);
   baseUrl: string;
   fetch?: typeof fetch;
   now?: () => number;
@@ -47,11 +48,12 @@ export function createGarminClient({
   let pending: Promise<CachedToken> | undefined;
 
   async function exchangeToken(): Promise<CachedToken> {
-    if (!apiKey) throw new GarminError("missing_key", "GARMIN_API_KEY não configurada no .env");
+    const key = typeof apiKey === "function" ? apiKey() : apiKey;
+    if (!key) throw new GarminError("missing_key", "GARMIN_API_KEY não configurada no .env");
     // No JSON Accept header: the endpoint returns the JWT as text/plain and answers 406 otherwise.
     const res = await fetchFn(baseUrl + TOKEN_PATH, {
       method: "POST",
-      headers: { Authorization: `ApiKey ${apiKey}` },
+      headers: { Authorization: `ApiKey ${key}` },
     });
     if (res.status === 401 || res.status === 403) {
       throw new GarminError(
