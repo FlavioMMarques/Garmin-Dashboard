@@ -82,6 +82,41 @@
 ## Checkpoint R
 - [x] Aba Corrida com dados reais; km de uma semana e uma melhor marca conferidos com o app; testes + typecheck
 
+# Fase Insights (decidido em 2026-11-05: "quero insights com base nos meus treinos")
+
+## R6: Ritmos de treino e previsões de prova (Daniels)
+**Description:** `daniels.ts`: a partir do VDOT estimado, ritmos de treino (Leve, Maratona, Limiar, Intervalado) pela fórmula de custo de O2 de Daniels/Gilbert, e previsões de 5 km / 10 km / 21 km / 42 km (resolvendo VDOT(d, t) = VDOT). Card "Ritmos sugeridos" na seção Melhores marcas, rotulado como estimativa.
+**Acceptance criteria:**
+- [ ] VDOT 50 → Limiar ≈ 4:15/km e Intervalado ≈ 3:55/km; previsões ≈ 19:57 / 41:21 / 1:31:35 / 3:10:49 (tabelas de Daniels, ±1%)
+- [ ] Sem VDOT no período → card explica por quê (precisa de um esforço ≥ 5 km)
+**Verification:** testes de `daniels.ts`; screenshot
+**Dependencies:** R3
+**Files:** web/src/lib/daniels.ts(+test), web/src/components/TrainingPaces.tsx, RunningPage.tsx
+**Scope:** S
+
+## R7: Motor de insights (regras puras)
+**Description:** `insights.ts` gera observações a partir das agregações já existentes, cada uma com tom (positivo / atenção / info), título curto e detalhe com os números que a sustentam. Regras: distribuição de intensidade; monotonia de tipo de treino; tendência de eficiência; tendência de ritmo; recordes antigos e quão perto o mês atual chegou; aumento brusco de volume (últimas 4 semanas vs 4 anteriores e última semana vs média); lacunas de consistência; custo do calor; ritmo das corridas "leves" vs ritmo leve sugerido pelo VDOT. Linguagem de observação, nunca prescrição médica; cada regra só dispara com dados suficientes.
+**Acceptance criteria:**
+- [ ] Cada regra tem teste com cenário que dispara e cenário que não dispara
+- [ ] Insights ordenados: atenção → positivo → info; no máximo 6 exibidos
+**Verification:** testes de `insights.ts`
+**Dependencies:** R2–R4, R6
+**Files:** web/src/lib/insights.ts(+test)
+**Scope:** M
+
+## R8: Painel de insights na aba Corrida
+**Description:** Painel "O que seus treinos mostram" logo abaixo dos tiles do período, cada insight com ícone + rótulo de tom (nunca só cor), título e detalhe; respeita o seletor de período.
+**Acceptance criteria:**
+- [ ] Trocar o período recalcula os insights
+- [ ] Tom comunicado por ícone + texto, não só cor
+**Verification:** teste de componente; screenshot com dados reais
+**Dependencies:** R7
+**Files:** web/src/components/InsightsPanel.tsx(+test), RunningPage.tsx, styles.css
+**Scope:** S
+
+## Checkpoint I
+- [ ] Insights com dados reais revisados pelo usuário (fazem sentido para os treinos dele?)
+
 ## R5: Detalhe km a km (opcional)
 **Description:** clicar numa corrida → baixar `.FIT` (`/download-service/files/activity/{id}`), decodificar no servidor, ritmo/FC/cadência por km. **Perguntar antes** sobre a dependência de parser FIT.
 **Dependencies:** R1
