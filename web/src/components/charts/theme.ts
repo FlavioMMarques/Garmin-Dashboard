@@ -8,6 +8,11 @@ const TOKENS = {
   grid: "--chart-grid",
   axis: "--chart-axis",
   surface: "--bg-surface",
+  zone1: "--zone-1",
+  zone2: "--zone-2",
+  zone3: "--zone-3",
+  zone4: "--zone-4",
+  zone5: "--zone-5",
 } as const;
 
 export type ChartTheme = Record<keyof typeof TOKENS, string>;

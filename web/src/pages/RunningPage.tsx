@@ -11,6 +11,8 @@ import { EfficiencyChart } from "../components/charts/EfficiencyChart";
 import { efficiencySeries, monthlyBests, BEST_DISTANCES } from "../lib/performance";
 import { BestsChart } from "../components/charts/BestsChart";
 import { BestEffortTiles } from "../components/BestEffortTiles";
+import { ZonesChart } from "../components/charts/ZonesChart";
+import { weeklyZones, zoneShare } from "../lib/training";
 import {
   MonthlyVolumeChart,
   WeeklyVolumeChart,
@@ -47,6 +49,8 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
       months: monthlyVolume(current, range.from, todayIso),
       pace: paceSeries(current, PACE_WINDOW),
       efficiency: efficiencySeries(current, PACE_WINDOW),
+      zones: weeklyZones(current, range.from, todayIso),
+      zoneShare: zoneShare(current),
       bests: BEST_DISTANCES.map((d) => ({ distance: d.id, months: monthlyBests(current, d.id) })),
     }),
     [current, range.from, todayIso],
@@ -141,6 +145,15 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
           <BestEffortTiles current={current} previous={previous} deltaLabel={vs} />
           <div className="chart-grid">
             <BestsChart series={charts.bests} refreshing={isPlaceholderData} />
+          </div>
+
+          <h2 className="section-title">Treino</h2>
+          <div className="chart-grid">
+            <ZonesChart
+              weeks={charts.zones}
+              share={charts.zoneShare}
+              refreshing={isPlaceholderData}
+            />
           </div>
 
           <h2 className="section-title">Volume</h2>

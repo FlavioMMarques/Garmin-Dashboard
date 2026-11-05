@@ -58,7 +58,8 @@ export function ChartCard({ title, subtitle, legend, table, refreshing, children
 export interface LegendItem {
   label: string;
   color: string;
-  shape: "line" | "dot";
+  /** Mirrors the mark: line for lines, dot for dots, square for bars. */
+  shape: "line" | "dot" | "square";
 }
 
 export function ChartLegend({ items }: { items: LegendItem[] }) {
@@ -66,11 +67,7 @@ export function ChartLegend({ items }: { items: LegendItem[] }) {
     <ul className="chart-legend">
       {items.map((it) => (
         <li key={it.label}>
-          <span
-            className={it.shape === "line" ? "key-line" : "key-dot"}
-            style={{ background: it.color }}
-            aria-hidden="true"
-          />
+          <span className={`key-${it.shape}`} style={{ background: it.color }} aria-hidden="true" />
           {it.label}
         </li>
       ))}

@@ -35,6 +35,12 @@
   --series-muted: #a3a29b;
   --chart-grid: #ecebe6;
   --chart-axis: #c3c2b7;
+  /* HR zones: ordinal blue ramp (validated --ordinal), Z1 lightest → Z5 darkest */
+  --zone-1: #86b6ef;
+  --zone-2: #5598e7;
+  --zone-3: #2a78d6;
+  --zone-4: #1c5cab;
+  --zone-5: #104281;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -55,6 +61,12 @@
     --series-muted: #6b6a65;
     --chart-grid: #2c3036;
     --chart-axis: #3d424a;
+    /* on dark, intensity reads as brightness: Z1 darkest → Z5 lightest */
+    --zone-1: #184f95;
+    --zone-2: #256abf;
+    --zone-3: #3987e5;
+    --zone-4: #6da7ec;
+    --zone-5: #9ec5f4;
   }
 }
 
@@ -405,4 +417,10 @@ input[type="date"] {
   font-size: var(--font-size-sm);
   font-weight: 600;
   margin: 0 0 var(--space-1);
+}
+.key-square {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
 }
