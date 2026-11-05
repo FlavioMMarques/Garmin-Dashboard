@@ -80,7 +80,7 @@
 **Scope:** M
 
 ## Checkpoint R
-- [ ] Aba Corrida com dados reais; km de uma semana e uma melhor marca conferidos com o app; testes + typecheck
+- [x] Aba Corrida com dados reais; km de uma semana e uma melhor marca conferidos com o app; testes + typecheck
 
 ## R5: Detalhe km a km (opcional)
 **Description:** clicar numa corrida → baixar `.FIT` (`/download-service/files/activity/{id}`), decodificar no servidor, ritmo/FC/cadência por km. **Perguntar antes** sobre a dependência de parser FIT.
