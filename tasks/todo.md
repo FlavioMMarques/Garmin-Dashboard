@@ -41,9 +41,9 @@
 ## R1: Corridas do período + aba Corrida
 **Description:** `/api/runs?from=YYYY-MM-DD` busca na Garmin todas as corridas (`activityType=running`, inclui esteira) desde `from`, paginando de 100 em 100, e devolve lista enxuta com campos de corrida (distância, duração, velocidade, FC média/máx, cadência, passada, oscilação, contato, razão vertical, potência, TE aeróbico/anaeróbico, label, `fastestSplit_*`, `hrTimeInZone_*`, temperatura, elevação). Cache em memória 10 min por `from`. Aba "Corrida" vira a inicial, com seletor 3m / 6m (padrão) / 1 ano / tudo e stat tiles do período (corridas, km, tempo, ritmo médio).
 **Acceptance criteria:**
-- [ ] Período "tudo" pagina até acabar; nenhum campo pessoal (nome do dono, GPS) sai do servidor
-- [ ] Segunda chamada igual em < 10 min não chama a Garmin
-- [ ] Trocar período não recarrega a página; tiles batem com a soma das corridas
+- [x] Período "tudo" pagina até acabar; nenhum campo pessoal (nome do dono, GPS) sai do servidor
+- [x] Segunda chamada igual em < 10 min não chama a Garmin
+- [x] Trocar período não recarrega a página; tiles batem com a soma das corridas
 **Verification:** testes de rota (paginação, cache, mapeamento) com fixture fictícia; manual
 **Dependencies:** T3
 **Files:** server/src/routes/runs.ts(+test), web/src/api/runs.ts, web/src/pages/RunningPage.tsx, web/src/components/StatTile.tsx
