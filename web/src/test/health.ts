@@ -3,8 +3,9 @@ import type { HealthDay, SleepNight } from "../api/wellness";
 export function mkNight(o: Partial<SleepNight> = {}): SleepNight {
   return {
     totalS: 7 * 3600,
-    deepS: 3600,
-    lightS: 4 * 3600,
+    // 18% deep, 21% REM: inside Garmin’s typical ranges
+    deepS: 1.25 * 3600,
+    lightS: 3.75 * 3600,
     remS: 1.5 * 3600,
     awakeS: 0.5 * 3600,
     score: 80,
