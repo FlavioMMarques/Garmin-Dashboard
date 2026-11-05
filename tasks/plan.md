@@ -56,6 +56,7 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 - [ ] T5 Sono (blocos de datas + rota + tela)
 - [ ] T6 Tendências de saúde (7/30/90 dias, gráficos)
 - [ ] H1 Insights cruzando saúde e treino (sono, Body Battery, FC repouso, HRV × desempenho)
+- Pedido do usuário (2026-11-05): **cada tela** (Saúde diária, Sono, Tendências) tem seu próprio painel de insights, além dos insights que interligam as áreas
 - ~~T7 Volume semanal de atividades~~ → absorvida pela R2
 - (T8 antecipada para depois do Checkpoint I)
 ### Checkpoint C — critérios de sucesso do SPEC

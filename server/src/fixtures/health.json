@@ -1,0 +1,48 @@
+{
+  "summaries": {
+    "data": [
+      {
+        "uuid": "u-1",
+        "userProfilePk": 123456,
+        "calendarDate": "2026-11-03",
+        "movement": { "steps": { "goal": 9000, "value": 9677 }, "floorsAscended": { "value": 7 } },
+        "calories": { "burnedResting": 2300, "burnedActive": 500, "burnedTotal": 2800 },
+        "heartRate": { "minValue": 39, "maxValue": 177, "restingValue": 43 },
+        "intensityMinutes": { "goal": 150, "moderate": 9, "vigorous": 35 },
+        "stress": { "avgLevel": 29, "maxLevel": 96, "qualifier": "balanced" },
+        "bodyBattery": { "minValue": 17, "maxValue": 95, "chargedValue": 44, "drainedValue": 78 },
+        "respiration": { "avgValue": 14 }
+      },
+      {
+        "uuid": "u-2",
+        "userProfilePk": 123456,
+        "calendarDate": "2026-11-04",
+        "movement": { "steps": { "goal": 9000, "value": 4000 } },
+        "heartRate": { "restingValue": 45 }
+      }
+    ]
+  },
+  "sleep": [
+    {
+      "id": 1,
+      "userProfilePK": 123456,
+      "calendarDate": "2026-11-03",
+      "sleepTimeSeconds": 21900,
+      "deepSleepSeconds": 3480,
+      "lightSleepSeconds": 13800,
+      "remSleepSeconds": 4560,
+      "awakeSleepSeconds": 60,
+      "sleepStartTimestampLocal": 1793669274000,
+      "sleepEndTimestampLocal": 1793691174000,
+      "avgHeartRate": 48,
+      "avgSleepStress": 12,
+      "sleepScores": { "overall": { "value": 78, "qualifierKey": "FAIR" } }
+    }
+  ],
+  "hrv": {
+    "userProfilePk": 123456,
+    "hrvSummaries": [
+      { "calendarDate": "2026-11-03", "weeklyAvg": 60, "lastNightAvg": 58, "status": "BALANCED" }
+    ]
+  }
+}
