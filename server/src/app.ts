@@ -2,6 +2,11 @@ import { Hono } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { GarminError, type GarminClient, type GarminErrorCode } from "./garminClient.js";
 import { activitiesRoutes } from "./routes/activities.js";
+import { runsRoutes } from "./routes/runs.js";
+
+export interface AppOptions {
+  now?: () => number;
+}
 
 const STATUS_BY_CODE: Record<GarminErrorCode, ContentfulStatusCode> = {
   missing_key: 503,
@@ -10,7 +15,7 @@ const STATUS_BY_CODE: Record<GarminErrorCode, ContentfulStatusCode> = {
   upstream: 502,
 };
 
-export function createApp(garmin: GarminClient) {
+export function createApp(garmin: GarminClient, options: AppOptions = {}) {
   const app = new Hono().basePath("/api");
 
   app.onError((err, c) => {
@@ -29,6 +34,7 @@ export function createApp(garmin: GarminClient) {
   });
 
   app.route("/", activitiesRoutes(garmin));
+  app.route("/", runsRoutes(garmin, options));
 
   return app;
 }
