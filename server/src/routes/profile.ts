@@ -32,9 +32,10 @@ export interface Profile {
 
 export function profileRoutes(
   garmin: GarminClient,
-  { now = Date.now }: { now?: () => number } = {},
+  { now = Date.now, onReset }: { now?: () => number; onReset?: (reset: () => void) => void } = {},
 ) {
   let cached: { expiresAt: number; profile: Promise<Profile> } | undefined;
+  onReset?.(() => (cached = undefined));
 
   async function load(): Promise<Profile> {
     const [settings, activities] = await Promise.all([

@@ -98,10 +98,13 @@ export function mapRun(raw: RawRun): RunSummary {
 
 export interface RunsOptions {
   now?: () => number;
+  /** Registers a callback that clears this route's cache. */
+  onReset?: (reset: () => void) => void;
 }
 
-export function runsRoutes(garmin: GarminClient, { now = Date.now }: RunsOptions = {}) {
+export function runsRoutes(garmin: GarminClient, { now = Date.now, onReset }: RunsOptions = {}) {
   const cache = new Map<string, { expiresAt: number; runs: Promise<RunSummary[]> }>();
+  onReset?.(() => cache.clear());
 
   async function fetchRuns(from: string | undefined): Promise<RunSummary[]> {
     const raw: RawRun[] = [];
