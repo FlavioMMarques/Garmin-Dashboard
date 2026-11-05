@@ -33,7 +33,7 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 - [x] T3 Atividades (rota + tela)
 - [x] R1 `/api/runs` (todas as corridas do período, campos de corrida, cache) + aba Corrida com seletor de período
 - [x] R2 Volume (semana/mês, ano vs ano anterior) + ritmo com média móvel por faixa de distância
-- [ ] R3 Eficiência aeróbica + melhores marcas + VDOT estimado
+- [x] R3 Eficiência aeróbica + melhores marcas + VDOT estimado
 - [ ] R4 Zonas de FC + dinâmica de corrida + carga/efeito de treino + calor
 ### Checkpoint R — aba Corrida com dados reais, números conferidos com o app
 - [ ] R5 Detalhe km a km (download `.FIT`) — **perguntar antes** sobre dependência de parser FIT

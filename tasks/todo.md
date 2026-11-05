@@ -62,8 +62,8 @@
 ## R3: Eficiência + melhores marcas + VDOT
 **Description:** eficiência = velocidade (m/min) ÷ FC média por corrida + média móvel; melhor 1k/1mi/5k/10k/21k por mês e recorde acumulado (degraus); VDOT estimado (fórmula de Daniels/Gilbert) a partir das melhores marcas recentes, rotulado "estimativa".
 **Acceptance criteria:**
-- [ ] Recordes só melhoram ao longo do tempo (curva em degraus) e o atual aparece destacado
-- [ ] VDOT de 5 km em 20:00 ≈ 49,8 (referência das tabelas de Daniels)
+- [x] Recordes só melhoram ao longo do tempo (curva em degraus) e o atual aparece destacado
+- [x] VDOT de 5 km em 20:00 ≈ 49,8 (referência das tabelas de Daniels)
 **Verification:** testes de `vdot` e `bests`
 **Dependencies:** R1
 **Files:** web/src/lib/vdot.ts(+test), web/src/lib/runStats.ts, RunningPage.tsx
