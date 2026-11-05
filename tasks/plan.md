@@ -41,7 +41,13 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 - [x] R7 Motor de insights (regras puras, testadas)
 - [x] R8 Painel de insights no topo da aba Corrida
 ### Checkpoint I ✅ — insights revisados pelo usuário (2026-11-05)
-- [ ] T8 Estados de erro (chave ausente/expirada) + README — antecipada: a chave do usuário expira
+- [x] T8 Estados de erro (chave ausente/expirada) — README movido para D3
+### Phase 2c: Perfil e distribuição (pedido do usuário, 2026-11-05)
+- [ ] P1 `/api/profile` (nome + foto + preferências) e saudação no topo
+- [ ] D1 Tela de Configuração: status da chave + colar nova chave (validada, gravada no `.env`, nunca devolvida); assistente na primeira execução
+- [ ] D2 Modo produção: `npm start` serve o web compilado pelo próprio servidor (uma porta, um comando)
+- [ ] D3 README de instalação para outras pessoas (Node, baixar, `npm install`, `npm start`, gerar chave)
+### Checkpoint D — uma pessoa sem o projeto consegue instalar e usar seguindo só o README
 - [ ] R5 Detalhe km a km (download `.FIT`) — **perguntar antes** sobre dependência de parser FIT
 
 ### Phase 3: Saúde
@@ -55,11 +61,15 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 ## Risks and Mitigations
 | Risco | Impacto | Mitigação |
 |---|---|---|
+| Tela de Configuração grava a chave via HTTP local: outro site poderia tentar um POST para 127.0.0.1 (CSRF / DNS rebinding) | Alto | Checar Host e Origin, exigir JSON (força preflight), validar a chave antes de gravar, nunca devolver a chave |
+| Insight soar como conselho médico/treinador | Médio | Linguagem de observação + referência citada ("referência comum"), nunca prescrição |
+| Insight com poucos dados vira ruído | Médio | Cada regra tem mínimo de dados para disparar; teste do caso que não dispara |
 | Formato da resposta do token / header desconhecido | Alto | T2 aceita `access_token`/`accessToken`/`token`; testar com chave real no Checkpoint A |
 | Rate limit não documentado | Médio | Cache em memória por (rota, período) no servidor + `staleTime` no TanStack Query |
 | Campos dos DTOs nulos (sem relógio no dia) | Médio | Tipos com `?`/`null`, UI mostra "—" |
 | Formato real de `dailysummaries` v2 difere do schema | Médio | Gravar fixture anonimizada da resposta real antes de mapear |
 
 ## Open Questions
+- D: as preferências do usuário dizem que a semana começa no domingo (gráficos usam seg–dom); respeitar `firstDayOfWeek`? Unidades imperiais para outros usuários?
 - R5: qual parser `.FIT` usar (dependência nova) — perguntar quando chegar lá.
 - API pessoal não expõe VO2max (fitnessage só traz FC repouso/minutos vigorosos/IMC) → VDOT estimado.

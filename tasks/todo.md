@@ -117,6 +117,36 @@
 ## Checkpoint I
 - [x] Insights com dados reais revisados pelo usuário (fazem sentido para os treinos dele?)
 
+# Fase Perfil e distribuição (pedido em 2026-11-05)
+
+## P1: Perfil no topo
+**Description:** `/api/profile` devolve só `fullName`, `photoUrl` (da atividade mais recente) e preferências (`locale`, `measurementSystem`, `timeZone`, `firstDayOfWeek`) de `/userprofile-service/userprofile/settings`; cache 1 h. Topo mostra foto + "Olá, Nome".
+**Acceptance criteria:**
+- [ ] Nenhum outro campo do dono sai do servidor (teste)
+- [ ] Sem atividades → topo sem nome, sem erro
+**Dependencies:** T2 · **Scope:** S
+
+## D1: Tela de Configuração
+**Description:** rota `#/configuracao`: status (chave configurada? válida?), campo para colar a chave → `POST /api/settings/key` troca a chave por token **antes** de gravar no `.env` (cria a partir do `.env.example` se faltar) e nunca devolve a chave. Sem chave, o app abre direto essa tela. Proteções: Host = 127.0.0.1/localhost, Origin do próprio app, `Content-Type: application/json`.
+**Acceptance criteria:**
+- [ ] Chave inválida não é gravada e mostra erro claro
+- [ ] POST com Origin/Host estranhos → 403 (teste)
+- [ ] Resposta e logs nunca contêm a chave (teste)
+**Dependencies:** T8 · **Scope:** M
+
+## D2: Modo produção com um comando
+**Description:** `npm run build` compila o web; `npm start` sobe o servidor servindo `web/dist` + `/api` em http://127.0.0.1:8787.
+**Acceptance criteria:**
+- [ ] Após `npm install && npm run build && npm start`, abrir a URL mostra o app funcionando
+**Dependencies:** D1 · **Scope:** S
+
+## D3: README de instalação
+**Description:** passo a passo para quem nunca viu o projeto: instalar Node LTS, baixar o projeto, `npm install`, `npm run build`, `npm start`, gerar a chave e colar na tela de Configuração; solução de problemas; privacidade (tudo local).
+**Dependencies:** D1, D2 · **Scope:** S
+
+## Checkpoint D
+- [ ] Instalação do zero seguindo só o README, numa pasta limpa
+
 ## R5: Detalhe km a km (opcional)
 **Description:** clicar numa corrida → baixar `.FIT` (`/download-service/files/activity/{id}`), decodificar no servidor, ritmo/FC/cadência por km. **Perguntar antes** sobre a dependência de parser FIT.
 **Dependencies:** R1
@@ -169,7 +199,7 @@
 ## Task 8: Estados de erro e README
 **Description:** chave ausente/expirada/limite → banner claro; loading/skeleton; README com passo a passo para gerar a chave.
 **Acceptance criteria:**
-- [ ] Sem chave → mensagem com link para gerar, não tela branca
+- [x] Sem chave → mensagem com link para gerar, não tela branca
 **Verification:** manual removendo a chave; testes
 **Dependencies:** T3–T7
 **Files:** web/src/components/ErrorBanner.tsx, README.md
