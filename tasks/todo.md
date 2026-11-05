@@ -115,7 +115,7 @@
 **Scope:** S
 
 ## Checkpoint I
-- [ ] Insights com dados reais revisados pelo usuário (fazem sentido para os treinos dele?)
+- [x] Insights com dados reais revisados pelo usuário (fazem sentido para os treinos dele?)
 
 ## R5: Detalhe km a km (opcional)
 **Description:** clicar numa corrida → baixar `.FIT` (`/download-service/files/activity/{id}`), decodificar no servidor, ritmo/FC/cadência por km. **Perguntar antes** sobre a dependência de parser FIT.
