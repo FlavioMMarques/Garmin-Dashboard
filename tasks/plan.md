@@ -27,7 +27,7 @@ scaffold ─▶ garminClient (token) ─▶ activities slice
 ### Checkpoint A ✅ — token é JWT em text/plain (24h), `Authorization: Bearer`
 
 ### Phase 2: Core slices
-- [ ] T3 Atividades (rota + tela)
+- [x] T3 Atividades (rota + tela)
 - [ ] T4 Saúde diária (rota + tela)
 - [ ] T5 Sono (blocos de datas + rota + tela)
 ### Checkpoint B — 3 telas com dados reais

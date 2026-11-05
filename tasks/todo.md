@@ -28,8 +28,8 @@
 ## Task 3: Atividades
 **Description:** `/api/activities?start&limit` → lista enxuta; tela com tabela paginada (data, tipo, nome, distância, duração, ritmo/velocidade, FC média, calorias).
 **Acceptance criteria:**
-- [ ] Tabela mostra 20 por página com "anterior/próxima"
-- [ ] Corrida mostra ritmo min/km; pedal mostra km/h
+- [x] Tabela mostra 20 por página com "anterior/próxima"
+- [x] Corrida mostra ritmo min/km; pedal mostra km/h
 **Verification:** testes de `format.ts` e do mapeamento; comparar 3 atividades com o app
 **Dependencies:** T2
 **Files:** server/src/routes/activities.ts, web/src/pages/Activities.tsx, web/src/lib/format.ts(+test), web/src/api/

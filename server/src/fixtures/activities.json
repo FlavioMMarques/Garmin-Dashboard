@@ -1,0 +1,39 @@
+[
+  {
+    "activityId": 1001,
+    "activityName": "Corrida de teste",
+    "startTimeLocal": "2026-01-10 07:30:00",
+    "startTimeGMT": "2026-01-10 10:30:00",
+    "activityType": { "typeId": 1, "typeKey": "running", "parentTypeId": 17 },
+    "distance": 5000.5,
+    "duration": 1800.25,
+    "movingDuration": 1790,
+    "averageSpeed": 2.7777,
+    "averageHR": 150,
+    "calories": 400,
+    "ownerFullName": "Pessoa Exemplo",
+    "startLatitude": -10.0,
+    "startLongitude": -20.0
+  },
+  {
+    "activityId": 1002,
+    "activityName": "Pedal de teste",
+    "startTimeLocal": "2026-01-08 18:00:00",
+    "startTimeGMT": "2026-01-08 21:00:00",
+    "activityType": { "typeId": 2, "typeKey": "cycling", "parentTypeId": 17 },
+    "distance": 30000,
+    "duration": 3600,
+    "averageSpeed": 8.3333,
+    "averageHR": 135,
+    "calories": 700
+  },
+  {
+    "activityId": 1003,
+    "activityName": "Musculação de teste",
+    "startTimeLocal": "2026-01-07 12:00:00",
+    "activityType": { "typeId": 13, "typeKey": "strength_training", "parentTypeId": 29 },
+    "distance": null,
+    "duration": 2700,
+    "calories": 250
+  }
+]

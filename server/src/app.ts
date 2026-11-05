@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { GarminError, type GarminClient, type GarminErrorCode } from "./garminClient.js";
+import { activitiesRoutes } from "./routes/activities.js";
 
 const STATUS_BY_CODE: Record<GarminErrorCode, ContentfulStatusCode> = {
   missing_key: 503,
@@ -26,6 +27,8 @@ export function createApp(garmin: GarminClient) {
     await garmin.checkAuth();
     return c.json({ ok: true });
   });
+
+  app.route("/", activitiesRoutes(garmin));
 
   return app;
 }

@@ -7,7 +7,10 @@ describe("App", () => {
     window.location.hash = "";
     render(<App />);
     expect(screen.getByRole("heading", { level: 1, name: "Tendências" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Tendências" })).toHaveAttribute("aria-current", "page");
+    expect(screen.getByRole("link", { name: "Tendências" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
   });
 
   it("opens the page from the hash", () => {
