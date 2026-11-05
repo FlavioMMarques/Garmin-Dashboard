@@ -509,3 +509,24 @@ input[type="date"] {
   color: var(--text-muted);
   line-height: 1.45;
 }
+.banner-error p,
+.banner-steps {
+  margin: var(--space-2) 0;
+}
+.banner-title {
+  display: block;
+}
+.banner-steps {
+  padding-left: var(--space-6);
+}
+.banner-steps li + li {
+  margin-top: var(--space-1);
+}
+.banner-error code {
+  font-size: 0.9em;
+}
+.banner-error button {
+  margin-top: var(--space-1);
+  border-color: currentColor;
+  background: transparent;
+}

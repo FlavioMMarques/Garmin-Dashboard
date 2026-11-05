@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { ErrorBanner } from "../components/ErrorBanner";
 import { useRuns } from "../api/runs";
 import { StatTile } from "../components/StatTile";
 import { paceDelta, percentDelta } from "../lib/delta";
@@ -38,7 +39,9 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
   const [period, setPeriod] = useState<Period>("6m");
   const range = periodRange(period, today);
   // Fetch from the start of the previous window so tiles can show the change.
-  const { data, error, isPending, isFetching, isPlaceholderData } = useRuns(range.prevFrom);
+  const { data, error, isPending, isFetching, isPlaceholderData, refetch } = useRuns(
+    range.prevFrom,
+  );
   // Year-to-date compares with the whole previous calendar year, independent of the period.
   const todayIso = toIsoDate(today);
   const year = today.getFullYear();
@@ -93,9 +96,7 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
       </div>
 
       {error ? (
-        <p className="banner-error" role="alert">
-          {error.message}
-        </p>
+        <ErrorBanner error={error} onRetry={() => void refetch()} />
       ) : isPending ? (
         <div className="stat-grid" aria-busy="true">
           {Array.from({ length: 5 }, (_, i) => (

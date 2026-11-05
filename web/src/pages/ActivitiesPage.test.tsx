@@ -78,7 +78,7 @@ describe("ActivitiesPage", () => {
     expect(await screen.findByText("Corrida de teste")).toBeInTheDocument();
   });
 
-  it("shows the server error message", async () => {
+  it("explains a missing key instead of a blank screen", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () =>
@@ -89,6 +89,8 @@ describe("ActivitiesPage", () => {
       ),
     );
     renderPage();
-    expect(await screen.findByRole("alert")).toHaveTextContent("GARMIN_API_KEY não configurada");
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent("Chave da Garmin não configurada");
+    expect(screen.getByRole("button", { name: "Tentar de novo" })).toBeInTheDocument();
   });
 });
