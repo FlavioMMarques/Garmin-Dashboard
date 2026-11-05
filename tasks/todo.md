@@ -3,9 +3,9 @@
 ## Task 1: Scaffold do monorepo
 **Description:** npm workspaces `server/` + `web/`, TypeScript, Vitest, ESLint/Prettier, `.gitignore`, `.env.example`, script `dev` subindo os dois, git init.
 **Acceptance criteria:**
-- [ ] `npm run dev` → http://localhost:5173 mostra o layout com navegação das 4 telas
-- [ ] `GET /api/health` (via proxy do Vite) responde `{ ok: true }`
-- [ ] `.env` está no `.gitignore`
+- [x] `npm run dev` → http://localhost:5173 mostra o layout com navegação das 4 telas
+- [x] `GET /api/health` (via proxy do Vite) responde `{ ok: true }`
+- [x] `.env` está no `.gitignore`
 **Verification:** `npm test`, `npm run typecheck`, `curl localhost:5173/api/health`
 **Dependencies:** None
 **Files:** package.json, server/{package.json,tsconfig.json,src/index.ts}, web/* (vite scaffold), .gitignore, .env.example
@@ -14,9 +14,9 @@
 ## Task 2: Cliente Garmin (token + fetch autenticado)
 **Description:** `garminClient.ts` troca a chave por token, guarda em memória até expirar, faz GET autenticado; renova uma vez em 401. Rota `/api/status` diz se a chave está configurada/válida.
 **Acceptance criteria:**
-- [ ] Duas chamadas seguidas fazem 1 troca de token (teste com fetch mockado)
-- [ ] Token expirado ou 401 → nova troca
-- [ ] Sem `GARMIN_API_KEY` → erro tipado `missing_key`
+- [x] Duas chamadas seguidas fazem 1 troca de token (teste com fetch mockado)
+- [x] Token expirado ou 401 → nova troca
+- [x] Sem `GARMIN_API_KEY` → erro tipado `missing_key`
 **Verification:** `npm test -w server`; manual: `curl localhost:8787/api/status` com chave real
 **Dependencies:** T1
 **Files:** server/src/garminClient.ts, garminClient.test.ts, index.ts

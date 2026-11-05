@@ -22,8 +22,8 @@ scaffold ─▶ garminClient (token) ─▶ activities slice
 
 ## Task List
 ### Phase 1: Foundation
-- [ ] T1 Scaffold do monorepo
-- [ ] T2 Cliente Garmin (token + fetch autenticado) — risco maior, fazer cedo
+- [x] T1 Scaffold do monorepo
+- [x] T2 Cliente Garmin (token + fetch autenticado) — risco maior, fazer cedo
 ### Checkpoint A — precisa da chave real no `.env` para confirmar formato do token
 
 ### Phase 2: Core slices
