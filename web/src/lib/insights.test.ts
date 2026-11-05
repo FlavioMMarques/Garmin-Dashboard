@@ -99,7 +99,7 @@ describe("easyPaceInsight", () => {
     const insight = easyPaceInsight(ctx([...easy, vdotRun]))!;
     expect(insight.tone).toBe("attention");
     expect(insight.detail).toMatch(/5:50 \/km/);
-    expect(insight.detail).toMatch(/6:1\d \/km/);
+    expect(insight.detail).toMatch(/6:1\d–7:\d\d \/km/);
   });
 
   it("falls back to the typical run when few runs are labelled easy", () => {
