@@ -12,7 +12,7 @@ import {
 } from "./performance";
 import { toIsoDate } from "./runStats";
 import { heatBins, labelCounts, zoneShare } from "./training";
-import { weeklyVolume } from "./volume";
+import { monthlyVolume, weeklyVolume } from "./volume";
 
 export type InsightTone = "attention" | "positive" | "info";
 
@@ -323,6 +323,192 @@ export function heatInsight({ current }: InsightContext): Insight | null {
   };
 }
 
+// ——— R9: training-structure rules ———
+
+const MONTHS_PT = [
+  "janeiro",
+  "fevereiro",
+  "março",
+  "abril",
+  "maio",
+  "junho",
+  "julho",
+  "agosto",
+  "setembro",
+  "outubro",
+  "novembro",
+  "dezembro",
+];
+const paceOf = (r: RunSummary) => (r.avgSpeedMps ? 1000 / r.avgSpeedMps : null);
+const pacesOf = (runs: RunSummary[]) => runs.map(paceOf).filter((x): x is number => x != null);
+const hourOf = (r: RunSummary) => Number(r.startLocal.slice(11, 13));
+
+/** Morning (before 10h) vs evening (from 17h) median pace, ≥ 4 runs each. */
+export function timeOfDayInsight({ current }: InsightContext): Insight | null {
+  const morning = pacesOf(current.filter((r) => hourOf(r) < 10));
+  const evening = pacesOf(current.filter((r) => hourOf(r) >= 17));
+  if (morning.length < 4 || evening.length < 4) return null;
+  const m = median(morning);
+  const e = median(evening);
+  const diff = Math.round(e - m);
+  if (Math.abs(diff) < 8) return null;
+  return {
+    id: "time-of-day",
+    tone: "info",
+    title: `Você corre mais rápido ${diff > 0 ? "de manhã" : "à noite"}`,
+    detail: `Mediana de ${pace(m)} de manhã (antes das 10h, ${morning.length} corridas) contra ${pace(e)} à noite (depois das 17h, ${evening.length}): cerca de ${Math.abs(diff)} s/km de diferença. Temperatura e o tipo de treino de cada horário também influenciam.`,
+  };
+}
+
+const isTreadmill = (r: RunSummary) => /treadmill|indoor/.test(r.type);
+
+/** Treadmill vs outdoor median pace, ≥ 3 runs each. */
+export function treadmillInsight({ current }: InsightContext): Insight | null {
+  const tread = pacesOf(current.filter(isTreadmill));
+  const road = pacesOf(current.filter((r) => !isTreadmill(r)));
+  if (tread.length < 3 || road.length < 3) return null;
+  const diff = Math.round(median(road) - median(tread));
+  if (Math.abs(diff) < 10) return null;
+  return {
+    id: "treadmill",
+    tone: "info",
+    title: "Esteira e rua têm ritmos diferentes",
+    detail: `Mediana de ${pace(median(tread))} na esteira e ${pace(median(road))} na rua: cerca de ${Math.abs(diff)} s/km mais ${diff > 0 ? "rápido" : "lento"} na esteira. O ritmo da esteira depende da calibração do relógio, então compare cada tipo com ele mesmo.`,
+  };
+}
+
+/** Long run (longest of each week) growth, or too much of the week in one run. */
+export function longRunInsight(ctx: InsightContext): Insight | null {
+  const weeks = completeWeeks(ctx);
+  if (weeks.length < 8) return null;
+  const active = (ws: typeof weeks) => ws.filter((w) => w.runs > 0);
+  const last4 = active(weeks.slice(-4));
+  const prev4 = active(weeks.slice(-8, -4));
+  if (last4.length < 3 || prev4.length < 3) return null;
+  const lastLong = avg(last4.map((w) => w.longestKm));
+  const prevLong = avg(prev4.map((w) => w.longestKm));
+  if (prevLong >= 3 && lastLong >= prevLong * 1.25) {
+    return {
+      id: "long-run",
+      tone: "positive",
+      title: "Seu longão está crescendo",
+      detail: `A maior corrida de cada semana passou de ${formatKm1(prevLong)} para ${formatKm1(lastLong)} em média (4 semanas anteriores → últimas 4).`,
+    };
+  }
+  const multi = last4.filter((w) => w.runs >= 2);
+  const share = multi.length >= 3 ? avg(multi.map((w) => w.longestKm / w.km)) : 0;
+  if (share > 0.5) {
+    return {
+      id: "long-run",
+      tone: "info",
+      title: "O longão concentra muito do volume",
+      detail: `Nas últimas 4 semanas, a maior corrida foi em média ${pct(share)} da distância da semana. Distribuir melhor o volume deixa o longão menos desgastante.`,
+    };
+  }
+  return null;
+}
+
+const HARD_LABELS = new Set([
+  "TEMPO",
+  "LACTATE_THRESHOLD",
+  "VO2MAX",
+  "ANAEROBIC_CAPACITY",
+  "SPEED",
+]);
+
+/** Hard sessions on back-to-back days. */
+export function hardSpacingInsight({ current }: InsightContext): Insight | null {
+  const hard = (r: RunSummary) => r.trainingLabel != null && HARD_LABELS.has(r.trainingLabel);
+  let pairs = 0;
+  for (let i = 1; i < current.length; i++) {
+    const a = current[i - 1]!;
+    const b = current[i]!;
+    if (hard(a) && hard(b) && daysBetween(a.startLocal, b.startLocal) === 1) pairs++;
+  }
+  if (pairs < 2) return null;
+  return {
+    id: "hard-spacing",
+    tone: "attention",
+    title: "Treinos fortes em dias seguidos",
+    detail: `Em ${pairs} vezes no período você fez treinos intensos (tempo, limiar ou VO2, segundo a Garmin) em dois dias seguidos. Intercalar com um dia leve ou de descanso ajuda o corpo a absorver o treino.`,
+  };
+}
+
+/** Almost no anaerobic training effect across ≥ 10 runs. */
+export function anaerobicInsight({ current }: InsightContext): Insight | null {
+  const withTe = current.filter((r) => r.anaerobicTe != null);
+  if (withTe.length < 10) return null;
+  const some = withTe.filter((r) => r.anaerobicTe! >= 1).length;
+  if (some / withTe.length >= 0.1) return null;
+  return {
+    id: "anaerobic",
+    tone: "info",
+    title: "Quase nenhum estímulo anaeróbico",
+    detail: `Só ${some} de ${withTe.length} corridas tiveram efeito anaeróbico de 1,0 ou mais, segundo a Garmin. Tiros curtos e rápidos (ex.: 8 × 200 m) trabalham velocidade e economia de corrida.`,
+  };
+}
+
+const FLAT_GAIN_M = 30;
+
+/** Nearly all runs flat (< 30 m of climb) across ≥ 10 runs. */
+export function elevationInsight({ current }: InsightContext): Insight | null {
+  const withGain = current.filter((r) => r.elevationGainM != null);
+  if (withGain.length < 10) return null;
+  const flat = withGain.filter((r) => r.elevationGainM! < FLAT_GAIN_M).length;
+  if (flat / withGain.length < 0.85) return null;
+  return {
+    id: "elevation",
+    tone: "info",
+    title: "Quase todas as corridas são planas",
+    detail: `${flat} de ${withGain.length} corridas tiveram menos de ${FLAT_GAIN_M} m de subida. Incluir subidas de vez em quando trabalha força e economia de corrida.`,
+  };
+}
+
+/** Biggest month by distance (needs ≥ 3 months of history). */
+export function bestMonthInsight({ current, today }: InsightContext): Insight | null {
+  const months = monthlyVolume(current, undefined, today);
+  if (months.length < 3) return null;
+  const best = months.reduce((a, b) => (b.km > a.km ? b : a));
+  if (best.km === 0) return null;
+  const thisMonth = today.slice(0, 7);
+  const lastMonth = shiftDays(`${thisMonth}-01`, -1).slice(0, 7);
+  const recent = best.month === thisMonth || best.month === lastMonth;
+  const name = MONTHS_PT[Number(best.month.slice(5, 7)) - 1];
+  return {
+    id: "best-month",
+    tone: recent ? "positive" : "info",
+    title: `Seu maior mês: ${name}`,
+    detail: `${formatKm1(best.km)} em ${best.runs} corridas — o maior volume mensal do período.`,
+  };
+}
+
+/** Runs per week since the first run (≥ 4 complete weeks): praise ≥ 4, note < 2. */
+export function frequencyInsight(ctx: InsightContext): Insight | null {
+  const weeks = weeklyVolume(ctx.current, undefined, ctx.today, ctx.weekStartsOn).filter(
+    (w) => shiftDays(w.weekStart, 6) < ctx.today,
+  );
+  if (weeks.length < 4) return null;
+  const perWeek = avg(weeks.map((w) => w.runs));
+  const n = formatDecimal(perWeek, 1);
+  if (perWeek >= 4) {
+    return {
+      id: "frequency",
+      tone: "positive",
+      title: "Alta frequência de treino",
+      detail: `Você corre em média ${n} vezes por semana.`,
+    };
+  }
+  if (perWeek < 2) {
+    return {
+      id: "frequency",
+      tone: "info",
+      title: "Poucas corridas por semana",
+      detail: `Você corre em média ${n} ${perWeek < 1.5 ? "vez" : "vezes"} por semana. Somar uma corrida leve curta por semana costuma acelerar a evolução sem muito desgaste.`,
+    };
+  }
+  return null;
+}
+
 const RULES = [
   intensityInsight,
   easyPaceInsight,
@@ -333,6 +519,14 @@ const RULES = [
   consistencyInsight,
   monotonyInsight,
   heatInsight,
+  hardSpacingInsight,
+  longRunInsight,
+  bestMonthInsight,
+  frequencyInsight,
+  timeOfDayInsight,
+  treadmillInsight,
+  anaerobicInsight,
+  elevationInsight,
 ];
 
 const TONE_ORDER: Record<InsightTone, number> = { attention: 0, positive: 1, info: 2 };
