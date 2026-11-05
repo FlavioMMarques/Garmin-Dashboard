@@ -5,11 +5,15 @@ import { paceDelta, percentDelta } from "../lib/delta";
 import { formatDistance, formatKmTotal, formatPace, formatTotalTime } from "../lib/format";
 import { PERIODS, periodRange, splitAt, summarize, toIsoDate, type Period } from "../lib/runStats";
 import { monthlyVolume, weeklyVolume, yearToDate } from "../lib/volume";
+import { paceSeries } from "../lib/pace";
+import { PaceChart } from "../components/charts/PaceChart";
 import {
   MonthlyVolumeChart,
   WeeklyVolumeChart,
   YearToDateChart,
 } from "../components/charts/VolumeCharts";
+
+const PACE_WINDOW = 5;
 
 const PREVIOUS_LABEL: Record<Period, string> = {
   "3m": "vs 3 meses anteriores",
@@ -37,6 +41,7 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
     () => ({
       weeks: weeklyVolume(current, range.from, todayIso),
       months: monthlyVolume(current, range.from, todayIso),
+      pace: paceSeries(current, PACE_WINDOW),
     }),
     [current, range.from, todayIso],
   );
@@ -117,6 +122,7 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
             />
           </div>
           <div className="chart-grid">
+            <PaceChart points={charts.pace} window={PACE_WINDOW} refreshing={isPlaceholderData} />
             <WeeklyVolumeChart weeks={charts.weeks} refreshing={isPlaceholderData} />
             <MonthlyVolumeChart months={charts.months} refreshing={isPlaceholderData} />
             {ytd && <YearToDateChart ytd={ytd} />}

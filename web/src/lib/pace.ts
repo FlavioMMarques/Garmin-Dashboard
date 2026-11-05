@@ -24,11 +24,27 @@ export interface PacePoint {
   distanceM: number;
   bucket: DistanceBucket;
   secPerKm: number;
-  /** Mean pace of the last `window` runs in the same bucket, this one included. */
+  /** Median pace of the last `window` runs in the same bucket, this one included. */
   rollingSecPerKm: number;
 }
 
-/** Pace per run (oldest first) with a trailing average per distance bucket. */
+function median(values: number[]): number {
+  const sorted = [...values].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[mid]! : (sorted[mid - 1]! + sorted[mid]!) / 2;
+}
+
+/** Linear-interpolated quantile of a sorted array. */
+function quantile(sorted: number[], q: number): number {
+  const pos = (sorted.length - 1) * q;
+  const lo = Math.floor(pos);
+  return sorted[lo]! + (sorted[Math.ceil(pos)]! - sorted[lo]!) * (pos - lo);
+}
+
+/**
+ * Pace per run (oldest first) with a trailing median per distance bucket —
+ * a median so one walk-like run doesn't drag the trend for `window` runs.
+ */
 export function paceSeries(runs: Run[], window = 5): PacePoint[] {
   const recent: Record<DistanceBucket, number[]> = { short: [], medium: [], long: [] };
   const points: PacePoint[] = [];
@@ -45,8 +61,53 @@ export function paceSeries(runs: Run[], window = 5): PacePoint[] {
       distanceM: r.distanceM,
       bucket,
       secPerKm,
-      rollingSecPerKm: last.reduce((a, b) => a + b, 0) / last.length,
+      rollingSecPerKm: median(last),
     });
   }
   return points;
+}
+
+export interface PaceTrend {
+  bucket: DistanceBucket;
+  count: number;
+  /** Rolling pace at the first and the last run of the bucket. */
+  firstSecPerKm: number;
+  lastSecPerKm: number;
+}
+
+/** Start vs end of the trailing average, for buckets that have runs (in BUCKETS order). */
+export function paceTrend(points: PacePoint[]): PaceTrend[] {
+  return BUCKETS.flatMap(({ id }) => {
+    const inBucket = points.filter((p) => p.bucket === id);
+    if (inBucket.length === 0) return [];
+    return [
+      {
+        bucket: id,
+        count: inBucket.length,
+        firstSecPerKm: inBucket[0]!.rollingSecPerKm,
+        lastSecPerKm: inBucket.at(-1)!.rollingSecPerKm,
+      },
+    ];
+  });
+}
+
+const DOMAIN_PAD_S = 10;
+const DOMAIN_STEP_S = 15;
+
+/**
+ * Y range (s/km) framing the 5th–95th percentile of runs plus every trend value,
+ * in 15 s steps; `outside` counts runs drawn off-scale (they stay in the table).
+ */
+export function paceDomain(points: PacePoint[]): { domain: [number, number]; outside: number } {
+  if (points.length === 0) return { domain: [240, 420], outside: 0 };
+  const paces = points.map((p) => p.secPerKm).sort((a, b) => a - b);
+  const trend = points.map((p) => p.rollingSecPerKm);
+  const lo = Math.min(quantile(paces, 0.05), ...trend) - DOMAIN_PAD_S;
+  const hi = Math.max(quantile(paces, 0.95), ...trend) + DOMAIN_PAD_S;
+  const domain: [number, number] = [
+    Math.floor(lo / DOMAIN_STEP_S) * DOMAIN_STEP_S,
+    Math.ceil(hi / DOMAIN_STEP_S) * DOMAIN_STEP_S,
+  ];
+  const outside = paces.filter((p) => p < domain[0] || p > domain[1]).length;
+  return { domain, outside };
 }
