@@ -8,7 +8,9 @@ import { monthlyVolume, weeklyVolume, yearToDate } from "../lib/volume";
 import { paceSeries } from "../lib/pace";
 import { PaceChart } from "../components/charts/PaceChart";
 import { EfficiencyChart } from "../components/charts/EfficiencyChart";
-import { efficiencySeries } from "../lib/performance";
+import { efficiencySeries, monthlyBests, BEST_DISTANCES } from "../lib/performance";
+import { BestsChart } from "../components/charts/BestsChart";
+import { BestEffortTiles } from "../components/BestEffortTiles";
 import {
   MonthlyVolumeChart,
   WeeklyVolumeChart,
@@ -34,9 +36,9 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
   const year = today.getFullYear();
   const ytdQuery = useRuns(`${year - 1}-01-01`);
 
-  const { current, totals, prevTotals } = useMemo(() => {
+  const { current, previous, totals, prevTotals } = useMemo(() => {
     const { current, previous } = splitAt(data ?? [], range.from);
-    return { current, totals: summarize(current), prevTotals: summarize(previous) };
+    return { current, previous, totals: summarize(current), prevTotals: summarize(previous) };
   }, [data, range.from]);
 
   const charts = useMemo(
@@ -45,6 +47,7 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
       months: monthlyVolume(current, range.from, todayIso),
       pace: paceSeries(current, PACE_WINDOW),
       efficiency: efficiencySeries(current, PACE_WINDOW),
+      bests: BEST_DISTANCES.map((d) => ({ distance: d.id, months: monthlyBests(current, d.id) })),
     }),
     [current, range.from, todayIso],
   );
@@ -124,6 +127,7 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
               deltaLabel={vs}
             />
           </div>
+          <h2 className="section-title">Evolução</h2>
           <div className="chart-grid">
             <PaceChart points={charts.pace} window={PACE_WINDOW} refreshing={isPlaceholderData} />
             <EfficiencyChart
@@ -131,6 +135,16 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
               window={PACE_WINDOW}
               refreshing={isPlaceholderData}
             />
+          </div>
+
+          <h2 className="section-title">Melhores marcas</h2>
+          <BestEffortTiles current={current} previous={previous} deltaLabel={vs} />
+          <div className="chart-grid">
+            <BestsChart series={charts.bests} refreshing={isPlaceholderData} />
+          </div>
+
+          <h2 className="section-title">Volume</h2>
+          <div className="chart-grid">
             <WeeklyVolumeChart weeks={charts.weeks} refreshing={isPlaceholderData} />
             <MonthlyVolumeChart months={charts.months} refreshing={isPlaceholderData} />
             {ytd && <YearToDateChart ytd={ytd} />}

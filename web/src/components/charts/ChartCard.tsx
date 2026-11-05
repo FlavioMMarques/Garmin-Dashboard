@@ -19,7 +19,7 @@ interface Props {
 export function ChartCard({ title, subtitle, legend, table, refreshing, children }: Props) {
   return (
     <figure className={`chart-card${refreshing ? " is-refreshing" : ""}`} aria-busy={refreshing}>
-      <h2>{title}</h2>
+      <h3>{title}</h3>
       {subtitle && <p className="chart-subtitle">{subtitle}</p>}
       {legend}
       {children}

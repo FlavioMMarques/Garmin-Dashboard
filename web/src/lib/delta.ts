@@ -30,3 +30,20 @@ export function paceDelta(currentMps: number | null, previousMps: number | null)
   const text = `${diff < 0 ? "−" : "+"}${Math.floor(abs / 60)}:${(abs % 60).toString().padStart(2, "0")} /km`;
   return { text, direction: diff < 0 ? "down" : "up", tone: diff < 0 ? "good" : "bad" };
 }
+
+/** Change in a duration (s): lower is good (a faster best effort). */
+export function durationDelta(current: number | null, previous: number | null): Delta | null {
+  if (!current || !previous) return null;
+  const diff = Math.round(current - previous);
+  if (diff === 0) return { text: "0:00", direction: "flat", tone: "neutral" };
+  const abs = Math.abs(diff);
+  const h = Math.floor(abs / 3600);
+  const m = Math.floor((abs % 3600) / 60);
+  const s = (abs % 60).toString().padStart(2, "0");
+  const body = h > 0 ? `${h}:${m.toString().padStart(2, "0")}:${s}` : `${m}:${s}`;
+  return {
+    text: `${diff < 0 ? "−" : "+"}${body}`,
+    direction: diff < 0 ? "down" : "up",
+    tone: diff < 0 ? "good" : "bad",
+  };
+}

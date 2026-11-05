@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { paceDelta, percentDelta } from "./delta";
+import { durationDelta, paceDelta, percentDelta } from "./delta";
 
 describe("percentDelta", () => {
   it("rounds and signs the change", () => {
@@ -29,5 +29,18 @@ describe("paceDelta", () => {
   });
   it("is null without both paces", () => {
     expect(paceDelta(null, 3)).toBeNull();
+  });
+});
+
+describe("durationDelta", () => {
+  it("shows a faster time as negative and good", () => {
+    expect(durationDelta(1563, 1605)).toEqual({ text: "−0:42", direction: "down", tone: "good" });
+  });
+  it("uses h:mm:ss above an hour and flags slower as bad", () => {
+    expect(durationDelta(8000, 4000)).toMatchObject({ text: "+1:06:40", tone: "bad" });
+  });
+  it("is null without both times and flat when equal", () => {
+    expect(durationDelta(null, 100)).toBeNull();
+    expect(durationDelta(100, 100.2)).toMatchObject({ direction: "flat", text: "0:00" });
   });
 });

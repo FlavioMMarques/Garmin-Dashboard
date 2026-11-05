@@ -113,6 +113,7 @@ export function PaceChart({
             dataKey="secPerKm"
             type="number"
             reversed
+            interval={0}
             domain={domain}
             allowDataOverflow
             tickFormatter={paceTick}
