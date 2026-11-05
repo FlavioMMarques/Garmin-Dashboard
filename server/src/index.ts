@@ -1,4 +1,6 @@
+import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { parseEnv } from "node:util";
 import { serve } from "@hono/node-server";
 import { createApp } from "./app.js";
 import { createGarminClient } from "./garminClient.js";
@@ -10,8 +12,17 @@ try {
   console.warn("[server] .env não encontrado — copie .env.example para .env");
 }
 
+/** Re-read .env on each token exchange so a renewed key is picked up without a restart. */
+function readApiKey(): string | undefined {
+  try {
+    return parseEnv(readFileSync(envFile, "utf8")).GARMIN_API_KEY || undefined;
+  } catch {
+    return process.env.GARMIN_API_KEY;
+  }
+}
+
 const garmin = createGarminClient({
-  apiKey: process.env.GARMIN_API_KEY,
+  apiKey: readApiKey,
   baseUrl: process.env.GARMIN_BASE_URL || "https://personal.connectapi.garmin.com",
   log: (msg) => console.log(`[garmin] ${msg}`),
 });

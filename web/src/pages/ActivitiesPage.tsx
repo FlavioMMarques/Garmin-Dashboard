@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ErrorBanner } from "../components/ErrorBanner";
 import { PAGE_SIZE, useActivities, type ActivitySummary } from "../api/activities";
 import {
   activityTypeLabel,
@@ -22,7 +23,7 @@ const NUMERIC_FROM = 3;
 
 export function ActivitiesPage() {
   const [page, setPage] = useState(0);
-  const { data, error, isPending, isPlaceholderData, isFetching } = useActivities(page);
+  const { data, error, isPending, isPlaceholderData, isFetching, refetch } = useActivities(page);
 
   return (
     <section>
@@ -50,9 +51,7 @@ export function ActivitiesPage() {
       </div>
 
       {error ? (
-        <p className="banner-error" role="alert">
-          {error.message}
-        </p>
+        <ErrorBanner error={error} onRetry={() => void refetch()} />
       ) : (
         <div className="panel table-wrap">
           <table className="data-table" aria-busy={isFetching}>

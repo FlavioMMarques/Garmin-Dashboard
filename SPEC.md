@@ -24,6 +24,10 @@ Usuário: eu mesmo (uso pessoal, um único usuário, nunca publicado na internet
    - **Carga:** efeito de treino aeróbico/anaeróbico e tipo de treino (`trainingEffectLabel`).
    - **Calor:** ritmo vs temperatura.
    - **Detalhe km a km** de uma corrida — exige baixar e decodificar o `.FIT` (dependência nova; perguntar antes).
+7. **Insights** — observações automáticas sobre os treinos do período (intensidade, ritmo leve vs VDOT, eficiência, recordes, volume, consistência, calor), em linguagem de observação.
+8. **Perfil** — nome e foto do dono da conta no topo (vêm de `ownerFullName`/`ownerProfileImageUrl` das atividades; o endpoint de perfil só traz preferências: idioma, unidades, fuso, primeiro dia da semana).
+9. **Instalável por outras pessoas** (pedido em 2026-11-05) — qualquer corredor instala localmente e usa com a própria chave:
+   tela de **Configuração** para colar a chave (validada antes de salvar), assistente na primeira execução, um único comando para rodar (`npm start`) e README de instalação.
 
 ## Como a API funciona (pesquisado na doc oficial)
 - Gerar chave em https://connect.garmin.com/app/settings/personalApiToken (validade 30/90/180/365 dias, mostrada uma única vez).
@@ -108,7 +112,7 @@ export function formatPace(secondsPerKm: number): string {
 ## Limites
 - **Sempre:** manter a chave só no `.env` (no `.gitignore`); rodar testes e typecheck antes de dizer que terminou.
 - **Perguntar antes:** instalar Node/dependências novas fora da stack acima; usar endpoints fora da tabela.
-- **Nunca:** enviar a chave ou o token ao navegador; expor o servidor fora de `127.0.0.1`; commitar dados pessoais reais.
+- **Nunca:** enviar a chave ou o token **do servidor para o** navegador (a tela de Configuração só envia a chave digitada para o servidor local, que nunca a devolve); expor o servidor fora de `127.0.0.1`; commitar dados pessoais reais.
 
 ## Critérios de sucesso
 - [ ] `npm run dev` abre http://localhost:5173 e as 4 telas carregam dados reais.
