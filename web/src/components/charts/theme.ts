@@ -8,6 +8,8 @@ const TOKENS = {
   grid: "--chart-grid",
   axis: "--chart-axis",
   surface: "--bg-surface",
+  /** Tick and label text: a text token, never the axis-line color. */
+  text: "--text-muted",
   zone1: "--zone-1",
   zone2: "--zone-2",
   zone3: "--zone-3",

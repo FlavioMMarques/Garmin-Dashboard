@@ -12,7 +12,9 @@ import { efficiencySeries, monthlyBests, BEST_DISTANCES } from "../lib/performan
 import { BestsChart } from "../components/charts/BestsChart";
 import { BestEffortTiles } from "../components/BestEffortTiles";
 import { ZonesChart } from "../components/charts/ZonesChart";
-import { weeklyZones, zoneShare } from "../lib/training";
+import { labelCounts, weeklyZones, zoneShare } from "../lib/training";
+import { TrainingTypesChart } from "../components/charts/TrainingTypesChart";
+import { HeatChart } from "../components/charts/HeatChart";
 import {
   MonthlyVolumeChart,
   WeeklyVolumeChart,
@@ -51,6 +53,7 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
       efficiency: efficiencySeries(current, PACE_WINDOW),
       zones: weeklyZones(current, range.from, todayIso),
       zoneShare: zoneShare(current),
+      labels: labelCounts(current),
       bests: BEST_DISTANCES.map((d) => ({ distance: d.id, months: monthlyBests(current, d.id) })),
     }),
     [current, range.from, todayIso],
@@ -154,6 +157,8 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
               share={charts.zoneShare}
               refreshing={isPlaceholderData}
             />
+            <TrainingTypesChart counts={charts.labels} refreshing={isPlaceholderData} />
+            <HeatChart runs={current} refreshing={isPlaceholderData} />
           </div>
 
           <h2 className="section-title">Volume</h2>

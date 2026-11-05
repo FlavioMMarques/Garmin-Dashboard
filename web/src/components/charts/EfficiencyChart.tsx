@@ -87,7 +87,7 @@ export function EfficiencyChart({
             scale="time"
             domain={["dataMin", "dataMax"]}
             tickFormatter={timeTick}
-            stroke={theme.axis}
+            stroke={theme.text}
             minTickGap={32}
             {...AXIS}
           />
@@ -99,7 +99,7 @@ export function EfficiencyChart({
               (max: number) => Math.ceil(max * 20) / 20,
             ]}
             tickFormatter={(v: number) => formatDecimal(v)}
-            stroke={theme.axis}
+            stroke={theme.text}
             width={48}
             {...AXIS}
           />

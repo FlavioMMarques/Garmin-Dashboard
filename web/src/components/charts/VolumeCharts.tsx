@@ -51,11 +51,11 @@ export function WeeklyVolumeChart({
           <XAxis
             dataKey="weekStart"
             tickFormatter={formatDayMonth}
-            stroke={theme.axis}
+            stroke={theme.text}
             minTickGap={24}
             {...AXIS}
           />
-          <YAxis tickFormatter={kmTick} stroke={theme.axis} width={44} {...AXIS} />
+          <YAxis tickFormatter={kmTick} stroke={theme.text} width={44} {...AXIS} />
           <Tooltip
             cursor={{ fill: theme.grid, opacity: 0.6 }}
             content={({ active, payload }) => {
@@ -108,11 +108,11 @@ export function MonthlyVolumeChart({
           <XAxis
             dataKey="month"
             tickFormatter={formatMonthShort}
-            stroke={theme.axis}
+            stroke={theme.text}
             minTickGap={12}
             {...AXIS}
           />
-          <YAxis tickFormatter={kmTick} stroke={theme.axis} width={44} {...AXIS} />
+          <YAxis tickFormatter={kmTick} stroke={theme.text} width={44} {...AXIS} />
           <Tooltip
             cursor={{ fill: theme.grid, opacity: 0.6 }}
             content={({ active, payload }) => {
@@ -201,11 +201,11 @@ export function YearToDateChart({ ytd, refreshing }: { ytd: YearToDate; refreshi
             domain={[1, ytd.rows.length]}
             ticks={monthTicks(year)}
             tickFormatter={monthLabel}
-            stroke={theme.axis}
+            stroke={theme.text}
             minTickGap={8}
             {...AXIS}
           />
-          <YAxis tickFormatter={kmTick} stroke={theme.axis} width={52} {...AXIS} />
+          <YAxis tickFormatter={kmTick} stroke={theme.text} width={52} {...AXIS} />
           <Tooltip
             cursor={{ stroke: theme.axis }}
             content={({ active, payload }) => {

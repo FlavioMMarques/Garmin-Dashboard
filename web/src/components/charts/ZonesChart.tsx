@@ -69,11 +69,11 @@ export function ZonesChart({
           <XAxis
             dataKey="weekStart"
             tickFormatter={formatDayMonth}
-            stroke={theme.axis}
+            stroke={theme.text}
             minTickGap={24}
             {...AXIS}
           />
-          <YAxis stroke={theme.axis} width={44} allowDecimals={false} {...AXIS} />
+          <YAxis stroke={theme.text} width={44} allowDecimals={false} {...AXIS} />
           <Tooltip
             cursor={{ fill: theme.grid, opacity: 0.6 }}
             content={({ active, payload }) => {

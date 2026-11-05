@@ -105,7 +105,7 @@ export function PaceChart({
             scale="time"
             domain={["dataMin", "dataMax"]}
             tickFormatter={timeTick}
-            stroke={theme.axis}
+            stroke={theme.text}
             minTickGap={32}
             {...AXIS}
           />
@@ -117,7 +117,7 @@ export function PaceChart({
             domain={domain}
             allowDataOverflow
             tickFormatter={paceTick}
-            stroke={theme.axis}
+            stroke={theme.text}
             width={48}
             {...AXIS}
           />

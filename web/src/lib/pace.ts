@@ -102,15 +102,25 @@ const DOMAIN_STEP_S = 15;
  * in 15 s steps; `outside` counts runs drawn off-scale (they stay in the table).
  */
 export function paceDomain(points: PacePoint[]): { domain: [number, number]; outside: number } {
-  if (points.length === 0) return { domain: [240, 420], outside: 0 };
-  const paces = points.map((p) => p.secPerKm).sort((a, b) => a - b);
-  const trend = points.map((p) => p.rollingSecPerKm);
-  const lo = Math.min(quantile(paces, 0.05), ...trend) - DOMAIN_PAD_S;
-  const hi = Math.max(quantile(paces, 0.95), ...trend) + DOMAIN_PAD_S;
+  return robustPaceRange(
+    points.map((p) => p.secPerKm),
+    points.map((p) => p.rollingSecPerKm),
+  );
+}
+
+/** Same framing for any set of paces; `keep` values (e.g. a trend) are always inside. */
+export function robustPaceRange(
+  paces: number[],
+  keep: number[] = [],
+): { domain: [number, number]; outside: number } {
+  if (paces.length === 0) return { domain: [240, 420], outside: 0 };
+  const sorted = [...paces].sort((a, b) => a - b);
+  const lo = Math.min(quantile(sorted, 0.05), ...keep) - DOMAIN_PAD_S;
+  const hi = Math.max(quantile(sorted, 0.95), ...keep) + DOMAIN_PAD_S;
   const domain: [number, number] = [
     Math.floor(lo / DOMAIN_STEP_S) * DOMAIN_STEP_S,
     Math.ceil(hi / DOMAIN_STEP_S) * DOMAIN_STEP_S,
   ];
-  const outside = paces.filter((p) => p < domain[0] || p > domain[1]).length;
+  const outside = sorted.filter((p) => p < domain[0] || p > domain[1]).length;
   return { domain, outside };
 }

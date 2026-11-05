@@ -76,7 +76,7 @@ export function BestsChart({
                 <XAxis
                   dataKey="month"
                   tickFormatter={formatMonthShort}
-                  stroke={theme.axis}
+                  stroke={theme.text}
                   minTickGap={8}
                   {...AXIS}
                 />
@@ -85,7 +85,7 @@ export function BestsChart({
                   interval={0}
                   domain={["dataMin", "dataMax"]}
                   tickFormatter={(v: number) => formatDuration(v)}
-                  stroke={theme.axis}
+                  stroke={theme.text}
                   width={56}
                   tickCount={3}
                   {...AXIS}
