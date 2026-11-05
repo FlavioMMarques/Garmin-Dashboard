@@ -45,7 +45,7 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 ### Phase 2c: Perfil e distribuição (pedido do usuário, 2026-11-05)
 - [x] P1 `/api/profile` (nome + foto + preferências) e saudação no topo; semanas seguem `firstDayOfWeek`
 - [x] R9 Máximo de insights de corrida (novas regras + painel mostra todos, agrupados)
-- [ ] D1 Tela de Configuração: status da chave + colar nova chave (validada, gravada no `.env`, nunca devolvida); assistente na primeira execução
+- [x] D1 Tela de Configuração: status da chave + colar nova chave (validada, gravada no `.env`, nunca devolvida); assistente na primeira execução
 - [ ] D2 Modo produção: `npm start` serve o web compilado pelo próprio servidor (uma porta, um comando)
 - [ ] D3 README de instalação para outras pessoas (Node, baixar, `npm install`, `npm start`, gerar chave)
 ### Checkpoint D — uma pessoa sem o projeto consegue instalar e usar seguindo só o README
