@@ -52,8 +52,8 @@
 ## R2: Volume + ritmo
 **Description:** funções puras `weekly.ts` (semana ISO seg–dom, semanas vazias = 0), `monthly`, acumulado do ano vs ano anterior, média móvel; gráficos: km/semana (barras) com maior corrida, km/mês, acumulado YTD (2 linhas), ritmo por corrida (pontos) + média móvel por faixa de distância.
 **Acceptance criteria:**
-- [ ] Semanas sem corrida aparecem como zero
-- [ ] Eixo de ritmo invertido (mais rápido em cima) e formatado em min:ss
+- [x] Semanas sem corrida aparecem como zero
+- [x] Eixo de ritmo invertido (mais rápido em cima) e formatado em min:ss
 **Verification:** testes de `weekly`/`rolling`; conferir km de uma semana com o app
 **Dependencies:** R1
 **Files:** web/src/lib/runStats.ts(+test), web/src/components/charts/*, RunningPage.tsx
