@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { RunSummary } from "../api/runs";
 import { RunningPage } from "./RunningPage";
@@ -48,6 +48,8 @@ function mockApi() {
   return fetchMock;
 }
 
+const summary = () => within(screen.getByRole("group", { name: "Resumo do período" }));
+
 function renderPage() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
@@ -63,7 +65,8 @@ describe("RunningPage", () => {
   it("defaults to 6 months and fetches from the start of the previous window", async () => {
     const fetchMock = mockApi();
     renderPage();
-    await screen.findByText("15,0 km");
+    await screen.findByRole("group", { name: "Resumo do período" });
+    expect(summary().getByText("15,0 km")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "6 meses" })).toHaveAttribute("aria-pressed", "true");
     expect(String(fetchMock.mock.calls[0]![0])).toBe("/api/runs?from=2025-11-06");
   });
@@ -71,26 +74,30 @@ describe("RunningPage", () => {
   it("shows period totals with change vs the previous window", async () => {
     mockApi();
     renderPage();
-    const distance = (await screen.findByText("Distância")).closest(".stat-tile")!;
+    await screen.findByRole("group", { name: "Resumo do período" });
+    const distance = summary().getByText("Distância").closest(".stat-tile")!;
     expect(distance).toHaveTextContent("15,0 km");
     expect(distance).toHaveTextContent("+200%");
 
-    const pace = screen.getByText("Ritmo médio").closest(".stat-tile")!;
+    const pace = summary().getByText("Ritmo médio").closest(".stat-tile")!;
     expect(pace).toHaveTextContent("5:00 /km");
     expect(pace).toHaveTextContent("−1:00 /km");
     expect(pace).toHaveTextContent("melhora");
 
-    expect(screen.getByText("Corridas").closest(".stat-tile")).toHaveTextContent("2");
-    expect(screen.getByText("Maior corrida").closest(".stat-tile")).toHaveTextContent("10,00 km");
+    expect(summary().getByText("Corridas").closest(".stat-tile")).toHaveTextContent("2");
+    expect(summary().getByText("Maior corrida").closest(".stat-tile")).toHaveTextContent(
+      "10,00 km",
+    );
   });
 
   it("switches period without deltas for 'Tudo'", async () => {
     const fetchMock = mockApi();
     renderPage();
-    await screen.findByText("15,0 km");
+    await screen.findByRole("group", { name: "Resumo do período" });
+    expect(summary().getByText("15,0 km")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Tudo" }));
-    expect(await screen.findByText("20,0 km")).toBeInTheDocument();
+    expect(await summary().findByText("20,0 km")).toBeInTheDocument();
     expect(String(fetchMock.mock.calls.at(-1)![0])).toBe("/api/runs");
-    expect(screen.queryByText(/vs /)).not.toBeInTheDocument();
+    expect(summary().queryByText(/vs /)).not.toBeInTheDocument();
   });
 });
