@@ -129,8 +129,8 @@
 ## R9: Máximo de insights de corrida (pedido em 2026-11-05: "o máximo de insights possíveis, de tudo")
 **Description:** novas regras sobre dados que já temos: manhã × noite, esteira × rua, progressão e peso do longão, treinos fortes em dias seguidos, pouco estímulo anaeróbico, relevo, melhor mês, frequência semanal, cadência e tempo de contato, VDOT vs período anterior. Painel mostra todos os insights agrupados (Atenção / Pontos positivos / Observações), não só 6.
 **Acceptance criteria:**
-- [ ] Cada regra nova tem teste que dispara e teste que não dispara
-- [ ] Painel mostra todos os insights, agrupados por tom
+- [x] Cada regra nova tem teste que dispara e teste que não dispara
+- [x] Painel mostra todos os insights, agrupados por tom
 **Dependencies:** R7, R8 · **Scope:** M
 
 ## D1: Tela de Configuração
