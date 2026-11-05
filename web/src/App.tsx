@@ -1,4 +1,7 @@
+import { useEffect } from "react";
 import { useHashRoute } from "./useHashRoute";
+import { useSettings } from "./api/settings";
+import { SettingsPage } from "./pages/SettingsPage";
 import { useProfile } from "./api/profile";
 import { ProfileBadge } from "./components/ProfileBadge";
 import { ActivitiesPage } from "./pages/ActivitiesPage";
@@ -13,6 +16,7 @@ const PAGES = {
   atividades: { label: "Atividades", Component: ActivitiesPage },
   saude: { label: "Saúde diária", Component: DailyPage },
   sono: { label: "Sono", Component: SleepPage },
+  configuracao: { label: "Configuração", Component: SettingsPage },
 } as const;
 
 type Route = keyof typeof PAGES;
@@ -22,6 +26,14 @@ export function App() {
   const route = useHashRoute(ROUTES, "corrida");
   const { Component } = PAGES[route];
   const { data: profile } = useProfile();
+  const { data: settings } = useSettings();
+
+  // First run: without a key nothing else can load, so start at Configuração.
+  useEffect(() => {
+    if (settings?.configured === false && route !== "configuracao") {
+      window.location.hash = "#/configuracao";
+    }
+  }, [settings?.configured, route]);
 
   return (
     <div className="shell">

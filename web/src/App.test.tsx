@@ -21,6 +21,23 @@ describe("App", () => {
     expect(screen.getByRole("link", { name: "Corrida" })).toHaveAttribute("aria-current", "page");
   });
 
+  it("opens Configuração on first run, when no key is configured", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) =>
+        String(url).endsWith("/api/settings")
+          ? Response.json({ configured: false })
+          : Response.json({ runs: [] }),
+      ),
+    );
+    window.location.hash = "#/corrida";
+    render(withQuery(<App />));
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Configuração" }),
+    ).toBeInTheDocument();
+    expect(window.location.hash).toBe("#/configuracao");
+  });
+
   it("opens the page from the hash", () => {
     window.location.hash = "#/sono";
     render(withQuery(<App />));

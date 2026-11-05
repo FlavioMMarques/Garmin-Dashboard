@@ -21,6 +21,8 @@ export interface GarminClient {
   get<T>(path: string, query?: Query): Promise<T>;
   /** Forces a token exchange; used by /api/status. */
   checkAuth(): Promise<void>;
+  /** Drops the cached token (e.g. after the key changed). */
+  reset?(): void;
 }
 
 interface Options {
@@ -113,6 +115,9 @@ export function createGarminClient({
     },
     async checkAuth() {
       await getToken();
+    },
+    reset() {
+      token = undefined;
     },
   };
 }

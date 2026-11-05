@@ -136,15 +136,15 @@
 ## D1: Tela de Configuração
 **Description:** rota `#/configuracao`: status (chave configurada? válida?), campo para colar a chave → `POST /api/settings/key` troca a chave por token **antes** de gravar no `.env` (cria a partir do `.env.example` se faltar) e nunca devolve a chave. Sem chave, o app abre direto essa tela. Proteções: Host = 127.0.0.1/localhost, Origin do próprio app, `Content-Type: application/json`.
 **Acceptance criteria:**
-- [ ] Chave inválida não é gravada e mostra erro claro
-- [ ] POST com Origin/Host estranhos → 403 (teste)
-- [ ] Resposta e logs nunca contêm a chave (teste)
+- [x] Chave inválida não é gravada e mostra erro claro
+- [x] POST com Origin/Host estranhos → 403 (teste)
+- [x] Resposta e logs nunca contêm a chave (teste)
 **Dependencies:** T8 · **Scope:** M
 
 ## D2: Modo produção com um comando
 **Description:** `npm run build` compila o web; `npm start` sobe o servidor servindo `web/dist` + `/api` em http://127.0.0.1:8787.
 **Acceptance criteria:**
-- [ ] Após `npm install && npm run build && npm start`, abrir a URL mostra o app funcionando
+- [x] Após `npm install && npm run build && npm start`, abrir a URL mostra o app funcionando
 **Dependencies:** D1 · **Scope:** S
 
 ## D3: README de instalação
@@ -152,7 +152,7 @@
 **Dependencies:** D1, D2 · **Scope:** S
 
 ## Checkpoint D
-- [ ] Instalação do zero seguindo só o README, numa pasta limpa
+- [x] Instalação do zero seguindo só o README, numa pasta limpa
 
 ## R5: Detalhe km a km (opcional)
 **Description:** clicar numa corrida → baixar `.FIT` (`/download-service/files/activity/{id}`), decodificar no servidor, ritmo/FC/cadência por km. **Perguntar antes** sobre a dependência de parser FIT.

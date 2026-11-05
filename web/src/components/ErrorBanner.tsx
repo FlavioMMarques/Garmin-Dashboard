@@ -14,9 +14,9 @@ function KeySteps() {
         (ela aparece uma única vez — copie na hora).
       </li>
       <li>
-        No arquivo <code>.env</code> do projeto, cole em <code>GARMIN_API_KEY=</code> e salve.
+        Abra a <a href="#/configuracao">Configuração</a>, cole a chave e salve — ela é testada antes
+        de ser gravada.
       </li>
-      <li>Clique em “Tentar de novo” — não precisa reiniciar o servidor.</li>
     </ol>
   );
 }

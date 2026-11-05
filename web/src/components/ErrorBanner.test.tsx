@@ -11,7 +11,11 @@ describe("ErrorBanner", () => {
     const alert = screen.getByRole("alert");
     expect(alert).toHaveTextContent("Chave da Garmin não configurada");
     expect(screen.getByRole("link", { name: /gerar a chave/i })).toHaveAttribute("href", KEY_URL);
-    expect(alert).toHaveTextContent("GARMIN_API_KEY");
+    expect(screen.getByRole("link", { name: "Configuração" })).toHaveAttribute(
+      "href",
+      "#/configuracao",
+    );
+    expect(alert).not.toHaveTextContent(".env");
   });
 
   it("explains an expired or invalid key with the same steps", () => {
