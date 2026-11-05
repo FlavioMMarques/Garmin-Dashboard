@@ -429,3 +429,83 @@ input[type="date"] {
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
+
+/* Training paces */
+.paces-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--space-4) var(--space-8);
+}
+.paces-list {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+}
+.paces-row {
+  display: contents;
+}
+.paces-list dt {
+  color: var(--text-muted);
+}
+.paces-list dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+/* Insights */
+.insights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.insight {
+  display: flex;
+  gap: var(--space-3);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+}
+.insight-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: #0b0b0b;
+}
+/* Status colors (reserved for status meaning), always paired with icon + label */
+.insight-attention .insight-icon {
+  background: #fab219;
+}
+.insight-positive .insight-icon {
+  background: #0ca30c;
+  color: #ffffff;
+}
+.insight-info .insight-icon {
+  background: var(--series-1);
+  color: #ffffff;
+}
+.insight-tone {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+.insight-title {
+  font-size: var(--font-size-md);
+  margin: 0 0 var(--space-1);
+}
+.insight-detail {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  line-height: 1.45;
+}

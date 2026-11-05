@@ -37,10 +37,10 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 - [x] R4 Zonas de FC + dinâmica de corrida + carga/efeito de treino + calor
 ### Checkpoint R ✅ — aba Corrida com dados reais, números conferidos com o app (2026-11-05)
 ### Phase 2b: Insights (pedido do usuário, 2026-11-05)
-- [ ] R6 Ritmos de treino e previsões de prova (Daniels, a partir do VDOT)
-- [ ] R7 Motor de insights (regras puras, testadas)
-- [ ] R8 Painel de insights no topo da aba Corrida
-### Checkpoint I — usuário revisa se os insights fazem sentido
+- [x] R6 Ritmos de treino e previsões de prova (Daniels, a partir do VDOT)
+- [x] R7 Motor de insights (regras puras, testadas)
+- [x] R8 Painel de insights no topo da aba Corrida
+### Checkpoint I ✅ — insights revisados pelo usuário (2026-11-05)
 - [ ] T8 Estados de erro (chave ausente/expirada) + README — antecipada: a chave do usuário expira
 - [ ] R5 Detalhe km a km (download `.FIT`) — **perguntar antes** sobre dependência de parser FIT
 
