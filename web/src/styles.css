@@ -548,3 +548,59 @@ input[type="date"] {
   font-size: var(--font-size-md);
   margin: 0 0 var(--space-2);
 }
+
+/* Settings */
+.settings {
+  max-width: 44rem;
+}
+.settings-welcome h2 {
+  margin-bottom: var(--space-1);
+}
+.settings-status {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+.settings-ok span {
+  color: var(--good-text);
+  font-weight: 700;
+}
+.settings-bad span {
+  color: var(--bad-text);
+  font-weight: 700;
+}
+.settings-form {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+.settings-steps {
+  margin: 0;
+  padding-left: var(--space-6);
+}
+.settings-steps li + li {
+  margin-top: var(--space-1);
+}
+.settings-form label {
+  font-weight: 600;
+}
+.settings-row {
+  display: flex;
+  gap: var(--space-2);
+}
+.settings-row input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-page);
+  font-family: ui-monospace, monospace;
+}
+.settings-privacy {
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+a {
+  color: var(--accent);
+}
