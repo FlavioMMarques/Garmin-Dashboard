@@ -73,7 +73,7 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
       labels: labelCounts(current),
       bests: BEST_DISTANCES.map((d) => ({ distance: d.id, months: monthlyBests(current, d.id) })),
     }),
-    [current, range.from, todayIso],
+    [current, range.from, todayIso, weekStartsOn],
   );
   const insights = useMemo(
     () =>
