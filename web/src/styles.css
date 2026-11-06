@@ -1060,3 +1060,55 @@ a {
   background: var(--text-primary);
   box-shadow: 0 0 0 2px var(--bg-surface);
 }
+
+/* Sono: one night's phases */
+.phase {
+  margin-top: auto;
+  padding-top: var(--space-4);
+}
+.phase-bar {
+  display: flex;
+  gap: 2px;
+  height: 14px;
+  border-radius: 7px;
+  overflow: hidden;
+}
+.phase-deep {
+  background: var(--series-1);
+}
+.phase-light {
+  background: var(--series-2);
+}
+.phase-rem {
+  background: var(--series-3);
+}
+.phase-awake {
+  background: var(--series-4);
+}
+.phase-legend {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: var(--space-2) var(--space-3);
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  font-size: var(--font-size-sm);
+}
+.phase-legend li {
+  display: flex;
+  flex-direction: column;
+}
+.phase-key {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--hero-muted);
+}
+.phase-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+.phase-legend strong {
+  font-variant-numeric: tabular-nums;
+}
