@@ -20,6 +20,7 @@ import { efficiencySeries, monthlyBests, BEST_DISTANCES } from "../lib/performan
 import { BestsChart } from "../components/charts/BestsChart";
 import { BestEffortTiles } from "../components/BestEffortTiles";
 import { TrainingPaces } from "../components/TrainingPaces";
+import { CrossInsights } from "../components/CrossInsights";
 import { InsightsPanel } from "../components/InsightsPanel";
 import { generateInsights } from "../lib/insights";
 import { ZonesChart } from "../components/charts/ZonesChart";
@@ -162,6 +163,7 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
           </div>
           <h2 className="section-title">O que seus treinos mostram</h2>
           <InsightsPanel insights={insights} />
+          <CrossInsights runs={current} from={range.from} today={todayIso} />
 
           <h2 className="section-title">Evolução</h2>
           <div className="chart-grid">

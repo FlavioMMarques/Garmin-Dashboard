@@ -226,6 +226,13 @@
 - [x] Trocar o período recalcula; tom por ícone + texto
 **Dependencies:** T6 · **Files:** web/src/lib/trendInsights.ts(+test), TrendsPage.tsx(+test) · **Scope:** M
 
+## H1: Saúde × treino
+**Description:** `crossInsights.ts` cruza as corridas do período com histórico diário e sono (`/api/daily/range` + `/api/sleep`, até 400 dias): eficiência aeróbica (m/batimento) depois de noites curtas × boas, com VFC baixa × equilibrada, com Body Battery baixo × alto, com FC repouso elevada × normal; VFC e pontuação do sono na noite depois de treinos fortes × leves; sono depois de corridas à noite. Seção "Saúde × treino" na aba Corrida. Linguagem de correlação, nunca causa.
+**Acceptance criteria:**
+- [x] Cada regra tem teste que dispara e que não dispara (inclui grupos pequenos demais)
+- [x] Trocar o período recalcula; período "Tudo" limitado aos últimos 400 dias para saúde
+**Dependencies:** R1–R4, H2, T5 · **Files:** web/src/lib/crossInsights.ts(+test), web/src/components/CrossInsights.tsx, RunningPage.tsx(+test) · **Scope:** M
+
 ## ~~Task 7: Volume semanal de atividades~~ → absorvida pela R2
 **Description:** gráfico de distância/tempo por semana no período escolhido, na tela de Tendências.
 **Acceptance criteria:**
