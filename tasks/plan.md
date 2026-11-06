@@ -77,5 +77,5 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 
 ## Open Questions
 - D: as preferências do usuário dizem que a semana começa no domingo (gráficos usam seg–dom); respeitar `firstDayOfWeek`? Unidades imperiais para outros usuários?
-- R5: qual parser `.FIT` usar (dependência nova) — perguntar quando chegar lá.
+- ~~R5: qual parser `.FIT` usar~~ — resolvido: `fit-file-parser` 6.2.3 (MIT), escolhido pelo usuário; o SDK oficial exige aceitar um contrato de licença com a Garmin.
 - API pessoal não expõe VO2max (fitnessage só traz FC repouso/minutos vigorosos/IMC) → VDOT estimado.
