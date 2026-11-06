@@ -44,6 +44,12 @@ describe("kmSplits", () => {
     expect(splits[1]!.elevationGainM).toBe(0);
   });
 
+  it("ignores barometric noise when adding up the climb", () => {
+    // ±0.5 m jitter on flat ground is not climbing.
+    const splits = kmSplits(steady(500, 4, (t) => ({ altitudeM: 10 + (t % 2 ? 0.5 : -0.5) })));
+    expect(splits.map((s) => s.elevationGainM)).toEqual([0, 0]);
+  });
+
   it("does not count a pause as running time", () => {
     // Runs 125 s, pauses for 5 minutes (no points), then resumes at the same distance.
     const before = steady(125, 4);
