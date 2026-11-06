@@ -252,4 +252,4 @@
 **Scope:** S
 
 ## Checkpoint C
-- [ ] Todos os critérios de sucesso do SPEC
+- [x] Todos os critérios de sucesso do SPEC

@@ -115,12 +115,12 @@ export function formatPace(secondsPerKm: number): string {
 - **Nunca:** enviar a chave ou o token **do servidor para o** navegador (a tela de Configuração só envia a chave digitada para o servidor local, que nunca a devolve); expor o servidor fora de `127.0.0.1`; commitar dados pessoais reais.
 
 ## Critérios de sucesso
-- [ ] `npm run dev` abre http://localhost:5173 e as 4 telas carregam dados reais.
-- [ ] Números de um dia escolhido batem com o app Garmin Connect.
-- [ ] Tendências de 90 dias funcionam (prova da quebra em blocos de 31 dias).
-- [ ] Token é reaproveitado (uma única troca de token a cada 24h, visível no log do servidor).
-- [ ] Chave ausente/expirada mostra mensagem clara na tela, não tela branca.
-- [ ] `npm test` e `npm run typecheck` passam.
+- [x] `npm run dev` abre http://localhost:5173 e as telas carregam dados reais (hoje são 6: Corrida, Tendências, Atividades, Saúde diária, Sono, Configuração) — verificado em 2026-11-05, depois de corrigir o `tsx watch` que travava sob o `concurrently`.
+- [x] Números de um dia escolhido batem com o app Garmin Connect (conferido pelo usuário na T4).
+- [x] Tendências de 90 dias funcionam: sono em 3 blocos de 31 dias (+3 de VFC); o histórico diário aceita até 366 dias por chamada (medido na API real), então 90 dias vão numa chamada.
+- [x] Token é reaproveitado: uma única troca (válida por 1440 min) no log de um servidor que atendeu dezenas de chamadas.
+- [x] Chave ausente/expirada mostra mensagem clara na tela (503 `missing_key` / 401 `auth_failed` → aviso com os passos; sem chave o app abre na Configuração).
+- [x] `npm test` (377 testes) e `npm run typecheck` passam.
 
 ## Perguntas em aberto
 1. ~~**Formato da resposta do token**~~ — resolvido: o endpoint devolve o JWT cru em `text/plain` (validade no claim `exp`, 24h) e responde 406 se o `Accept` pedir JSON; chamadas usam `Authorization: Bearer <token>`.
