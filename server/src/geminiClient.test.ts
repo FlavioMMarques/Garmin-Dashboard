@@ -18,7 +18,9 @@ function reply(...texts: string[]) {
 
 function setup(response: () => Response, { noKey = false } = {}) {
   const apiKey = noKey ? undefined : "AIza-test";
-  const fetchFn = vi.fn(async (_input: string | URL | Request, _init?: RequestInit) => response());
+  const fetchFn = vi.fn<(input: string | URL | Request, init?: RequestInit) => Promise<Response>>(
+    async () => response(),
+  );
   const client = createGeminiClient({
     apiKey: () => apiKey,
     model: "gemini-test-flash",
