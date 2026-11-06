@@ -51,13 +51,17 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 ### Checkpoint D ✅ — instalação do zero (clone limpo) seguindo o README, 2026-11-05
 - [ ] R5 Detalhe km a km (download `.FIT`) — **perguntar antes** sobre dependência de parser FIT
 
-### Phase 3: Saúde
+### Phase 3: Saúde (com insights em todas as telas — pedido do usuário, 2026-11-05)
 - [x] T4 Saúde diária (rota + tela) — números conferidos com o app (2026-11-05)
+- [ ] H2 Histórico diário: `/api/daily/range` (v2 dailysummaries, blocos ≤ 31 dias) — base para insights e para a T6
+- [ ] H3 Insights do dia: o dia escolhido comparado com os seus últimos 30 dias, painel na Saúde diária
+### Checkpoint H — insights de saúde diária revisados pelo usuário
 - [ ] T5 Sono (blocos de datas + rota + tela)
-- [ ] T6 Tendências de saúde (7/30/90 dias, gráficos)
+- [ ] H4 Insights de sono (duração, regularidade de horários, fases, pontuação vs o seu padrão)
+- [ ] T6 Tendências de saúde (7/30/90 dias, gráficos) — reaproveita a H2
+- [ ] H5 Insights de tendência (FC repouso, estresse, Body Battery, passos: direção, dia da semana, sequências)
 - [ ] H1 Insights cruzando saúde e treino (sono, Body Battery, FC repouso, HRV × desempenho)
 - ~~T7 Volume semanal de atividades~~ → absorvida pela R2
-- (T8 antecipada para depois do Checkpoint I)
 ### Checkpoint C — critérios de sucesso do SPEC
 
 ## Risks and Mitigations
