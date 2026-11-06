@@ -172,19 +172,19 @@
 **Scope:** M
 
 ## H2: Histórico diário
-**Description:** `/api/daily/range?from&to` busca `/usersummary-service/v2/dailysummaries` em blocos de ≤ 31 dias (`dateRanges.ts`) e devolve uma lista enxuta por dia (passos, meta, FC repouso, estresse médio e % alto, Body Battery mín/máx/carregou/gastou, minutos moderados/vigorosos, calorias ativas). Cache 10 min por intervalo. Antes de mapear, conferir na API real o tamanho máximo do intervalo e gravar fixture anonimizada.
+**Description:** `/api/daily/range?from&to` busca `/usersummary-service/v2/dailysummaries` em blocos de ≤ 366 dias (limite medido na API real em 2026-11-05: 366 ok, 367 → 400; dias sem dados são omitidos pela Garmin e o servidor os preenche) (`dateRanges.ts`) e devolve uma lista enxuta por dia (passos, meta, FC repouso, estresse médio e % alto, Body Battery mín/máx/carregou/gastou, minutos moderados/vigorosos, calorias ativas). Cache 10 min por intervalo. Antes de mapear, conferir na API real o tamanho máximo do intervalo e gravar fixture anonimizada.
 **Acceptance criteria:**
-- [ ] 90 dias → 3 chamadas à Garmin, resultado contínuo e ordenado por data
-- [ ] Dias sem dados vêm com `hasData: false`, intervalo inválido ou > 400 dias → 400
-- [ ] Nenhum id de conta/dispositivo sai do servidor (teste)
+- [x] Até 366 dias → 1 chamada; 400 dias → 2 chamadas; resultado contínuo (um item por dia, lacunas preenchidas) e ordenado
+- [x] Dias sem dados vêm com `hasData: false`, intervalo inválido ou > 400 dias → 400
+- [x] Nenhum id de conta/dispositivo sai do servidor (teste)
 **Verification:** testes de `dateRanges` e da rota; curl com a chave real
 **Dependencies:** T4 · **Files:** server/src/dateRanges.ts(+test), server/src/routes/daily.ts(+test), fixtures · **Scope:** M
 
 ## H3: Insights do dia
 **Description:** `healthInsights.ts` compara o dia escolhido com os 30 dias anteriores (vindos da H2): FC repouso acima/abaixo da sua linha de base; Body Battery máximo baixo/alto vs o típico; carregou menos do que gastou; estresse médio e tempo em estresse alto vs o típico; passos vs meta e vs a sua média, sequência de dias batendo a meta; minutos de intensidade da semana vs a meta semanal. Painel "O que o seu dia mostra" (reaproveita `InsightsPanel`). Linguagem de observação, nunca diagnóstico; cada regra exige um mínimo de dias de histórico.
 **Acceptance criteria:**
-- [ ] Cada regra tem teste que dispara e teste que não dispara (inclui histórico insuficiente)
-- [ ] Trocar o dia recalcula os insights; tom por ícone + texto
+- [x] Cada regra tem teste que dispara e teste que não dispara (inclui histórico insuficiente)
+- [x] Trocar o dia recalcula os insights; tom por ícone + texto
 **Verification:** testes; screenshot com dados reais; revisão do usuário
 **Dependencies:** H2 · **Files:** web/src/lib/healthInsights.ts(+test), web/src/api/daily.ts, DailyPage.tsx(+test) · **Scope:** M
 
