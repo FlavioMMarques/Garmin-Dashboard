@@ -611,3 +611,15 @@ input[type="date"] {
 a {
   color: var(--accent);
 }
+
+/* Kilometre splits under a run in the activities table */
+.details-cell {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+}
+.run-splits {
+  display: grid;
+  gap: var(--space-4);
+}
+.run-splits .data-table {
+  max-width: 40rem;
+}

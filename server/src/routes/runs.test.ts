@@ -12,7 +12,11 @@ function setup(pages: RawRun[][] = [fixture]) {
     const index = Number(query?.start ?? 0) / 100;
     return (pages[index] ?? []) as never;
   });
-  const garmin: GarminClient = { get, checkAuth: async () => {} };
+  const garmin: GarminClient = {
+    get,
+    checkAuth: async () => {},
+    getBinary: async () => Buffer.alloc(0),
+  };
   const app = createApp(garmin, { now: () => clock });
   return { app, get, advance: (ms: number) => (clock += ms) };
 }

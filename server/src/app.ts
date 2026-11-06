@@ -3,6 +3,7 @@ import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { GarminError, type GarminClient, type GarminErrorCode } from "./garminClient.js";
 import { activitiesRoutes } from "./routes/activities.js";
 import { runsRoutes } from "./routes/runs.js";
+import { splitsRoutes } from "./routes/splits.js";
 import { profileRoutes } from "./routes/profile.js";
 import { dailyRoutes } from "./routes/daily.js";
 import { sleepRoutes } from "./routes/sleep.js";
@@ -46,6 +47,7 @@ export function createApp(garmin: GarminClient, options: AppOptions = {}) {
 
   app.route("/", activitiesRoutes(garmin));
   app.route("/", runsRoutes(garmin, { ...options, onReset }));
+  app.route("/", splitsRoutes(garmin, { ...options, onReset }));
   app.route("/", profileRoutes(garmin, { ...options, onReset }));
   app.route("/", dailyRoutes(garmin, { ...options, onReset }));
   app.route("/", sleepRoutes(garmin, { ...options, onReset }));

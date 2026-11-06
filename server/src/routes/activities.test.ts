@@ -7,7 +7,7 @@ import { mapActivity, type RawActivity } from "./activities.js";
 const fixture = fixtureJson as RawActivity[];
 
 function appWith(get: GarminClient["get"]) {
-  return createApp({ get, checkAuth: async () => {} });
+  return createApp({ get, checkAuth: async () => {}, getBinary: async () => Buffer.alloc(0) });
 }
 
 describe("mapActivity", () => {

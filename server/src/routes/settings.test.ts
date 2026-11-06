@@ -6,7 +6,12 @@ import type { SettingsDeps } from "./settings.js";
 const KEY = "GCDC_test-key.123+abc";
 
 function setup(overrides: Partial<SettingsDeps> = {}) {
-  const garmin: GarminClient = { get: vi.fn(), checkAuth: async () => {}, reset: vi.fn() };
+  const garmin: GarminClient = {
+    get: vi.fn(),
+    checkAuth: async () => {},
+    getBinary: async () => Buffer.alloc(0),
+    reset: vi.fn(),
+  };
   const settings: SettingsDeps = {
     isConfigured: () => false,
     verifyKey: vi.fn(async () => {}),

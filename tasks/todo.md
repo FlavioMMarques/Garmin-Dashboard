@@ -154,10 +154,13 @@
 ## Checkpoint D
 - [x] Instalação do zero seguindo só o README, numa pasta limpa
 
-## R5: Detalhe km a km (opcional)
-**Description:** clicar numa corrida → baixar `.FIT` (`/download-service/files/activity/{id}`), decodificar no servidor, ritmo/FC/cadência por km. **Perguntar antes** sobre a dependência de parser FIT.
-**Dependencies:** R1
-**Scope:** M
+## R5: Detalhe km a km
+**Description:** `/api/runs/:id/splits` baixa `/download-service/files/activity/{id}` (zip com um .FIT; `Accept: */*` — JSON dá 406), descompacta pelo diretório central (o cabeçalho local vem sem tamanhos), decodifica com `fit-file-parser` 6.2.3 (MIT, escolhido pelo usuário em 2026-11-05 em vez do SDK oficial, cuja licença é um contrato com a Garmin) e calcula os km a partir dos registros (não das voltas, que dependem da configuração do relógio): ritmo, FC média, cadência (×2, o FIT guarda por perna) e subida por km. GPS nunca sai do servidor. Na tela de Atividades, corridas ganham "km a km" com tabela e insights da corrida (negative split, deriva cardíaca, km mais rápido/lento).
+**Acceptance criteria:**
+- [x] km calculados batem com as voltas automáticas de 1 km do relógio (±2 s, ±1 bpm): 41 km de 8 corridas reais, máx. 1,5 s e 1 bpm; subida com histerese de 2 m, erro médio 0,66 m/km
+- [x] Nenhuma coordenada GPS na resposta (teste)
+- [x] Cada insight da corrida tem teste que dispara e que não dispara
+**Dependencies:** R1 · **Scope:** M
 
 ---
 
