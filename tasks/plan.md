@@ -53,7 +53,7 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 
 ### Phase 3: Saúde (com insights em todas as telas — pedido do usuário, 2026-11-05)
 - [x] T4 Saúde diária (rota + tela) — números conferidos com o app (2026-11-05)
-- [ ] H2 Histórico diário: `/api/daily/range` (v2 dailysummaries, blocos ≤ 31 dias) — base para insights e para a T6
+- [x] H2 Histórico diário: `/api/daily/range` (v2 dailysummaries, blocos ≤ 31 dias) — base para insights e para a T6
 - [ ] H3 Insights do dia: o dia escolhido comparado com os seus últimos 30 dias, painel na Saúde diária
 ### Checkpoint H — insights de saúde diária revisados pelo usuário
 - [ ] T5 Sono (blocos de datas + rota + tela)

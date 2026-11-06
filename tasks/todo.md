@@ -172,11 +172,11 @@
 **Scope:** M
 
 ## H2: Histórico diário
-**Description:** `/api/daily/range?from&to` busca `/usersummary-service/v2/dailysummaries` em blocos de ≤ 31 dias (`dateRanges.ts`) e devolve uma lista enxuta por dia (passos, meta, FC repouso, estresse médio e % alto, Body Battery mín/máx/carregou/gastou, minutos moderados/vigorosos, calorias ativas). Cache 10 min por intervalo. Antes de mapear, conferir na API real o tamanho máximo do intervalo e gravar fixture anonimizada.
+**Description:** `/api/daily/range?from&to` busca `/usersummary-service/v2/dailysummaries` em blocos de ≤ 366 dias (limite medido na API real em 2026-11-05: 366 ok, 367 → 400; dias sem dados são omitidos pela Garmin e o servidor os preenche) (`dateRanges.ts`) e devolve uma lista enxuta por dia (passos, meta, FC repouso, estresse médio e % alto, Body Battery mín/máx/carregou/gastou, minutos moderados/vigorosos, calorias ativas). Cache 10 min por intervalo. Antes de mapear, conferir na API real o tamanho máximo do intervalo e gravar fixture anonimizada.
 **Acceptance criteria:**
-- [ ] 90 dias → 3 chamadas à Garmin, resultado contínuo e ordenado por data
-- [ ] Dias sem dados vêm com `hasData: false`, intervalo inválido ou > 400 dias → 400
-- [ ] Nenhum id de conta/dispositivo sai do servidor (teste)
+- [x] Até 366 dias → 1 chamada; 400 dias → 2 chamadas; resultado contínuo (um item por dia, lacunas preenchidas) e ordenado
+- [x] Dias sem dados vêm com `hasData: false`, intervalo inválido ou > 400 dias → 400
+- [x] Nenhum id de conta/dispositivo sai do servidor (teste)
 **Verification:** testes de `dateRanges` e da rota; curl com a chave real
 **Dependencies:** T4 · **Files:** server/src/dateRanges.ts(+test), server/src/routes/daily.ts(+test), fixtures · **Scope:** M
 
