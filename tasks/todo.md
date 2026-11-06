@@ -165,7 +165,7 @@
 **Description:** `/api/daily?date` (dailysummaries v2 + body battery do dia) → passos, calorias, FC repouso, estresse médio, Body Battery mín/máx, minutos de intensidade; tela com seletor de data e stat tiles.
 **Acceptance criteria:**
 - [ ] Números batem com o app para um dia escolhido
-- [ ] Dia sem dados mostra "—"
+- [x] Dia sem dados mostra "—"
 **Verification:** teste do mapeamento com fixture; comparação manual
 **Dependencies:** T2
 **Files:** server/src/routes/daily.ts(+test), web/src/pages/Daily.tsx, web/src/components/StatTile.tsx

@@ -52,7 +52,7 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 - [ ] R5 Detalhe km a km (download `.FIT`) — **perguntar antes** sobre dependência de parser FIT
 
 ### Phase 3: Saúde
-- [ ] T4 Saúde diária (rota + tela)
+- [x] T4 Saúde diária (rota + tela) — falta conferir os números com o app
 - [ ] T5 Sono (blocos de datas + rota + tela)
 - [ ] T6 Tendências de saúde (7/30/90 dias, gráficos)
 - [ ] H1 Insights cruzando saúde e treino (sono, Body Battery, FC repouso, HRV × desempenho)
