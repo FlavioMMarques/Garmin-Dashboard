@@ -6,7 +6,11 @@ import fixture from "../fixtures/daily.json" with { type: "json" };
 function setup(response: unknown = fixture.day) {
   let clock = 0;
   const get = vi.fn(async () => response as never);
-  const garmin: GarminClient = { get, checkAuth: async () => {} };
+  const garmin: GarminClient = {
+    get,
+    checkAuth: async () => {},
+    getBinary: async () => Buffer.alloc(0),
+  };
   return {
     app: createApp(garmin, { now: () => clock }),
     get,

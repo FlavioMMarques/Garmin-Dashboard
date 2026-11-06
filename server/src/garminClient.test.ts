@@ -172,4 +172,26 @@ describe("garminClient", () => {
     });
     await expect(client.get("/a")).rejects.toMatchObject({ code: "auth_failed" });
   });
+
+  it("downloads files as bytes, asking for any content type", async () => {
+    const { client, fetchMock, queue } = setup();
+    queue(
+      new Response(Buffer.from([0x50, 0x4b, 3, 4]), {
+        headers: { "content-type": "application/x-zip-compressed" },
+      }),
+    );
+    const bytes = await client.getBinary("/download-service/files/activity/1");
+    expect(bytes).toEqual(Buffer.from([0x50, 0x4b, 3, 4]));
+    // Garmin answers 406 to a JSON Accept on downloads.
+    const init = fetchMock.mock.calls.at(-1)![1];
+    expect(new Headers(init?.headers).get("accept")).toBe("*/*");
+  });
+
+  it("maps download errors like other calls", async () => {
+    const { client, queue } = setup();
+    queue(new Response("", { status: 404 }));
+    await expect(client.getBinary("/download-service/files/activity/1")).rejects.toBeInstanceOf(
+      GarminError,
+    );
+  });
 });

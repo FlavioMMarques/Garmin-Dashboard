@@ -15,7 +15,11 @@ function webDist() {
 }
 
 function setup(dist: string | null = webDist()) {
-  const garmin: GarminClient = { get: async () => ({}) as never, checkAuth: async () => {} };
+  const garmin: GarminClient = {
+    get: async () => ({}) as never,
+    checkAuth: async () => {},
+    getBinary: async () => Buffer.alloc(0),
+  };
   return createRootApp(createApp(garmin), dist);
 }
 

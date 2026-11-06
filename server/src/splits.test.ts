@@ -50,7 +50,7 @@ describe("kmSplits", () => {
     const after = steady(125, 4).map((p) => ({
       ...p,
       t: p.t + 125 + 300,
-      distanceM: 500 + p.distanceM,
+      distanceM: 500 + p.distanceM!,
     }));
     const [km] = kmSplits([...before, ...after]);
     expect(km!.durationS).toBe(250);

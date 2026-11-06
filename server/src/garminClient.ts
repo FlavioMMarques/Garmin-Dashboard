@@ -19,6 +19,8 @@ export type Query = Record<string, string | number | boolean | undefined>;
 
 export interface GarminClient {
   get<T>(path: string, query?: Query): Promise<T>;
+  /** Raw bytes, e.g. an activity's zipped .FIT file. */
+  getBinary(path: string): Promise<Buffer>;
   /** Forces a token exchange; used by /api/status. */
   checkAuth(): Promise<void>;
   /** Drops the cached token (e.g. after the key changed). */
@@ -87,31 +89,37 @@ export function createGarminClient({
   async function request(
     path: string,
     query: Query | undefined,
-    retried: boolean,
+    accept: string,
+    retried = false,
   ): Promise<Response> {
     const url = new URL(baseUrl + path);
     for (const [k, v] of Object.entries(query ?? {})) {
       if (v !== undefined) url.searchParams.set(k, String(v));
     }
     const res = await fetchFn(url, {
-      headers: { Authorization: `Bearer ${await getToken()}`, Accept: "application/json" },
+      headers: { Authorization: `Bearer ${await getToken()}`, Accept: accept },
     });
     if (res.status === 401 && !retried) {
       token = undefined;
-      return request(path, query, true);
+      return request(path, query, accept, true);
     }
+    if (res.status === 401 || res.status === 403) {
+      throw new GarminError("auth_failed", "Acesso negado pela Garmin", res.status);
+    }
+    if (!res.ok) throw upstreamError(res.status);
     return res;
   }
 
   return {
     async get<T>(path: string, query?: Query): Promise<T> {
-      const res = await request(path, query, false);
-      if (res.status === 401 || res.status === 403) {
-        throw new GarminError("auth_failed", "Acesso negado pela Garmin", res.status);
-      }
-      if (!res.ok) throw upstreamError(res.status);
+      const res = await request(path, query, "application/json");
       if (res.status === 204) return null as T;
       return (await res.json()) as T;
+    },
+    async getBinary(path: string): Promise<Buffer> {
+      // A JSON Accept makes the download service answer 406.
+      const res = await request(path, undefined, "*/*");
+      return Buffer.from(await res.arrayBuffer());
     },
     async checkAuth() {
       await getToken();

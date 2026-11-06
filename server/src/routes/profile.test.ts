@@ -8,7 +8,11 @@ function setup(activities: unknown[] = [fixture.activity]) {
   const get = vi.fn(
     async (path: string) => (path.includes("userprofile") ? fixture.settings : activities) as never,
   );
-  const garmin: GarminClient = { get, checkAuth: async () => {} };
+  const garmin: GarminClient = {
+    get,
+    checkAuth: async () => {},
+    getBinary: async () => Buffer.alloc(0),
+  };
   return {
     app: createApp(garmin, { now: () => clock }),
     get,

@@ -3,7 +3,12 @@ import { createApp } from "./app.js";
 import { GarminError, type GarminClient } from "./garminClient.js";
 
 function fakeClient(overrides: Partial<GarminClient> = {}): GarminClient {
-  return { get: async () => ({}) as never, checkAuth: async () => {}, ...overrides };
+  return {
+    get: async () => ({}) as never,
+    checkAuth: async () => {},
+    getBinary: async () => Buffer.alloc(0),
+    ...overrides,
+  };
 }
 
 describe("app", () => {

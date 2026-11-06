@@ -8,7 +8,11 @@ const V2_PATH = "/usersummary-service/v2/dailysummaries";
 function setup(data: unknown[] = fixture.data) {
   let clock = 0;
   const get = vi.fn(async () => ({ data }) as never);
-  const garmin: GarminClient = { get, checkAuth: async () => {} };
+  const garmin: GarminClient = {
+    get,
+    checkAuth: async () => {},
+    getBinary: async () => Buffer.alloc(0),
+  };
   return {
     app: createApp(garmin, { now: () => clock }),
     get,

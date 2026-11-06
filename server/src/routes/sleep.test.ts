@@ -10,7 +10,11 @@ function setup(sleep: unknown[] = fixture.sleep, hrv: unknown = fixture.hrv) {
   const get = vi.fn(
     async (...[path]: [string, Query?]) => (path.startsWith("/hrv") ? hrv : sleep) as never,
   );
-  const garmin: GarminClient = { get, checkAuth: async () => {} };
+  const garmin: GarminClient = {
+    get,
+    checkAuth: async () => {},
+    getBinary: async () => Buffer.alloc(0),
+  };
   return {
     app: createApp(garmin, { now: () => clock }),
     get,
