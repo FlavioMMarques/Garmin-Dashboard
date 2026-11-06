@@ -36,7 +36,8 @@ export function useSleep(from: string, to: string) {
     queryKey: ["sleep", from, to],
     queryFn: ({ signal }) =>
       getJson<{ nights: Night[] }>(`/api/sleep?from=${from}&to=${to}`, signal),
-    select: (r) => r.nights,
+    // Never undefined: with keepPreviousData an undefined result re-renders forever.
+    select: (r) => r.nights ?? [],
     placeholderData: keepPreviousData,
     staleTime: 5 * 60_000,
   });
