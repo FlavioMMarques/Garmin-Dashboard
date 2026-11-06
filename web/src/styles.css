@@ -178,6 +178,11 @@ button {
   background: var(--bg-surface);
   cursor: pointer;
 }
+.date-field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
 button:disabled {
   opacity: 0.5;
   cursor: default;
