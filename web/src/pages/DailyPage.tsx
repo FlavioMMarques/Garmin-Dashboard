@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDaily, type DailySummary } from "../api/daily";
+import { DayInsights } from "../components/DayInsights";
 import { ErrorBanner } from "../components/ErrorBanner";
 import { StatTile } from "../components/StatTile";
 import { formatDistance } from "../lib/format";
@@ -68,6 +69,7 @@ export function DailyPage() {
             </p>
           )}
           <DayTiles day={data} refreshing={isPlaceholderData} />
+          <DayInsights date={date} today={today} />
         </>
       )}
     </section>

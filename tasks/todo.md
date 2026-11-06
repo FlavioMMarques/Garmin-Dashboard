@@ -183,8 +183,8 @@
 ## H3: Insights do dia
 **Description:** `healthInsights.ts` compara o dia escolhido com os 30 dias anteriores (vindos da H2): FC repouso acima/abaixo da sua linha de base; Body Battery máximo baixo/alto vs o típico; carregou menos do que gastou; estresse médio e tempo em estresse alto vs o típico; passos vs meta e vs a sua média, sequência de dias batendo a meta; minutos de intensidade da semana vs a meta semanal. Painel "O que o seu dia mostra" (reaproveita `InsightsPanel`). Linguagem de observação, nunca diagnóstico; cada regra exige um mínimo de dias de histórico.
 **Acceptance criteria:**
-- [ ] Cada regra tem teste que dispara e teste que não dispara (inclui histórico insuficiente)
-- [ ] Trocar o dia recalcula os insights; tom por ícone + texto
+- [x] Cada regra tem teste que dispara e teste que não dispara (inclui histórico insuficiente)
+- [x] Trocar o dia recalcula os insights; tom por ícone + texto
 **Verification:** testes; screenshot com dados reais; revisão do usuário
 **Dependencies:** H2 · **Files:** web/src/lib/healthInsights.ts(+test), web/src/api/daily.ts, DailyPage.tsx(+test) · **Scope:** M
 

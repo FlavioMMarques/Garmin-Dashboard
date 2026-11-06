@@ -37,3 +37,35 @@ export function useDaily(date: string) {
     staleTime: 5 * 60_000,
   });
 }
+
+/** One day of history; mirrors DayPoint in server/src/routes/daily.ts. */
+export interface DayPoint {
+  date: string;
+  hasData: boolean;
+  steps: number | null;
+  stepGoal: number | null;
+  restingHr: number | null;
+  stressAvg: number | null;
+  /** Share (0–1) of the day spent in high stress. */
+  stressHighShare: number | null;
+  bodyBatteryMin: number | null;
+  bodyBatteryMax: number | null;
+  bodyBatteryCharged: number | null;
+  bodyBatteryDrained: number | null;
+  intensityModerate: number | null;
+  intensityVigorous: number | null;
+  intensityGoal: number | null;
+  caloriesActive: number | null;
+}
+
+/** Every day from `from` to `to` (both included), oldest first. */
+export function useDailyRange(from: string, to: string) {
+  return useQuery({
+    queryKey: ["daily-range", from, to],
+    queryFn: ({ signal }) =>
+      getJson<{ days: DayPoint[] }>(`/api/daily/range?from=${from}&to=${to}`, signal),
+    select: (r) => r.days,
+    placeholderData: keepPreviousData,
+    staleTime: 5 * 60_000,
+  });
+}

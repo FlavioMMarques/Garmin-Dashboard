@@ -1,7 +1,8 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { DailySummary } from "../api/daily";
+import type { DailySummary, DayPoint } from "../api/daily";
+import { shiftDate } from "../lib/health";
 import { DailyPage } from "./DailyPage";
 
 const day: DailySummary = {
@@ -37,9 +38,45 @@ const empty: DailySummary = {
   hasData: false,
 } as DailySummary;
 
-function mockApi(byDate: Record<string, DailySummary>) {
+function point(date: string, over: Partial<DayPoint> = {}): DayPoint {
+  return {
+    date,
+    hasData: true,
+    steps: 8000,
+    stepGoal: 10000,
+    restingHr: 45,
+    stressAvg: 25,
+    stressHighShare: 0.02,
+    bodyBatteryMin: 20,
+    bodyBatteryMax: 80,
+    bodyBatteryCharged: 60,
+    bodyBatteryDrained: 60,
+    intensityModerate: 0,
+    intensityVigorous: 0,
+    intensityGoal: 150,
+    caloriesActive: 300,
+    ...over,
+  };
+}
+
+/** Range days come from `history`; days it does not return have no data. */
+function mockApi(
+  byDate: Record<string, DailySummary>,
+  history: (date: string) => DayPoint | undefined = () => undefined,
+) {
   const fetchMock = vi.fn(async (url: string) => {
-    const date = new URL(url, "http://x").searchParams.get("date")!;
+    const { pathname, searchParams } = new URL(url, "http://x");
+    if (pathname === "/api/profile") {
+      return new Response(JSON.stringify({ firstDayOfWeek: "monday" }), { status: 200 });
+    }
+    if (pathname === "/api/daily/range") {
+      const days = [];
+      for (let d = searchParams.get("from")!; d <= searchParams.get("to")!; d = shiftDate(d, 1)) {
+        days.push(history(d) ?? { ...point(d), hasData: false });
+      }
+      return new Response(JSON.stringify({ days }), { status: 200 });
+    }
+    const date = searchParams.get("date")!;
     return new Response(JSON.stringify(byDate[date] ?? { ...empty, date }), { status: 200 });
   });
   vi.stubGlobal("fetch", fetchMock);
@@ -102,7 +139,7 @@ describe("DailyPage", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /dia anterior/i }));
     await screen.findByText(/sem dados do relógio/i);
-    expect(fetchMock).toHaveBeenLastCalledWith("/api/daily?date=2026-11-03", expect.anything());
+    expect(fetchMock).toHaveBeenCalledWith("/api/daily?date=2026-11-03", expect.anything());
     expect(screen.getByLabelText("Data")).toHaveValue("2026-11-03");
     expect(next).toBeEnabled();
   });
@@ -121,6 +158,27 @@ describe("DailyPage", () => {
     renderPage();
     fireEvent.change(screen.getByLabelText("Data"), { target: { value: "2026-10-15" } });
     await screen.findByText(/sem dados do relógio/i);
-    expect(fetchMock).toHaveBeenLastCalledWith("/api/daily?date=2026-10-15", expect.anything());
+    expect(fetchMock).toHaveBeenCalledWith("/api/daily?date=2026-10-15", expect.anything());
+  });
+
+  it("compares the day with the previous 30 days", async () => {
+    const fetchMock = mockApi({ "2026-11-04": day }, (d) =>
+      point(d, d === "2026-11-04" ? { restingHr: 50 } : {}),
+    );
+    renderPage();
+
+    expect(
+      await screen.findByRole("heading", { name: "FC em repouso acima do seu normal" }),
+    ).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/daily/range?from=2026-10-05&to=2026-11-04",
+      expect.anything(),
+    );
+  });
+
+  it("explains when there is no history to compare with", async () => {
+    mockApi({ "2026-11-04": day });
+    renderPage();
+    expect(await screen.findByText(/histórico suficiente/i)).toBeInTheDocument();
   });
 });

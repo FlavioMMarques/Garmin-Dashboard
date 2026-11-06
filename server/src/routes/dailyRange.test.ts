@@ -1,13 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 import { createApp } from "../app.js";
-import type { GarminClient, Query } from "../garminClient.js";
+import type { GarminClient } from "../garminClient.js";
 import fixture from "../fixtures/dailyRange.json" with { type: "json" };
 
 const V2_PATH = "/usersummary-service/v2/dailysummaries";
 
 function setup(data: unknown[] = fixture.data) {
   let clock = 0;
-  const get = vi.fn(async (_path: string, _query?: Query) => ({ data }) as never);
+  const get = vi.fn(async () => ({ data }) as never);
   const garmin: GarminClient = { get, checkAuth: async () => {} };
   return {
     app: createApp(garmin, { now: () => clock }),
