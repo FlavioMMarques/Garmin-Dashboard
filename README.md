@@ -1,6 +1,13 @@
 # Garmin Dashboard
 
-Painel para analisar **seus próprios treinos de corrida** do Garmin Connect, rodando **só no seu computador**: evolução de ritmo e eficiência, melhores marcas, VDOT estimado, zonas de frequência cardíaca, volume semanal e uma lista de observações automáticas sobre os seus treinos.
+Painel para analisar **seus próprios dados** do Garmin Connect, rodando **só no seu computador**:
+
+- **Corrida:** evolução de ritmo e eficiência, melhores marcas, VDOT estimado, zonas de frequência cardíaca e volume semanal.
+- **Km a km:** na lista de Atividades, cada corrida abre ritmo, FC, cadência e subida por quilômetro.
+- **Saúde diária e Sono:** passos, FC em repouso, estresse, Body Battery, fases do sono e VFC noturna.
+- **Tendências:** como essas métricas evoluem em 7, 30 ou 90 dias, ou 1 ano.
+
+Cada tela traz **observações automáticas** sobre os seus números, comparando com o seu próprio histórico. A aba Corrida também cruza sono, VFC e Body Battery com o desempenho nas corridas.
 
 Ele usa a **Garmin Connect Personal API** com uma chave pessoal sua. Nada é enviado para servidores de terceiros: o painel conversa direto com a Garmin a partir do seu computador.
 
@@ -62,6 +69,7 @@ O painel avisa que a chave foi recusada. Gere uma nova no Garmin Connect e cole 
 - **Onde fica a chave:** só no arquivo `.env` da pasta do projeto, no seu computador. Ela é usada apenas pelo servidor local para falar com a Garmin e **nunca é enviada para o navegador**.
 - **Quem acessa o painel:** só o seu computador. O servidor escuta em `127.0.0.1`, então outros aparelhos da rede não conseguem abrir o painel. Ele também recusa pedidos vindos de outros sites.
 - **O que fica gravado:** nenhum dado de treino é salvo em disco. Os dados são buscados na Garmin quando você abre o painel e ficam em memória por alguns minutos.
+- **Km a km:** ao abrir o detalhe de uma corrida, o servidor local baixa da Garmin o arquivo original da atividade (`.FIT`, que inclui o trajeto GPS) e calcula os quilômetros ali mesmo, em memória. Só o resultado (ritmo, FC, cadência e subida por km) vai para a tela; **as coordenadas GPS nunca chegam ao navegador** e o arquivo não é salvo.
 - **Se for compartilhar a pasta:** nunca envie o `.env` para outra pessoa nem para o GitHub. Ele já está no `.gitignore`.
 
 ## Problemas comuns
@@ -101,4 +109,6 @@ O painel avisa que a chave foi recusada. Gere uma nova no Garmin Connect e cole 
 - [docs/decisions/](docs/decisions/): decisões de arquitetura.
 - [docs/garmin-openapi.json](docs/garmin-openapi.json): spec OpenAPI da Personal API, extraída da documentação oficial.
 
-As análises de treino (VDOT, ritmos sugeridos, previsões) usam as fórmulas de Jack Daniels e J. Gilbert. São **estimativas** e não substituem a orientação de um treinador ou médico.
+O arquivo `.FIT` é lido com [fit-file-parser](https://github.com/jimmykane/fit-parser) (licença MIT). O SDK oficial da Garmin foi descartado porque usá-lo exige aceitar um contrato de licença com a Garmin.
+
+As análises de treino (VDOT, ritmos sugeridos, previsões) usam as fórmulas de Jack Daniels e J. Gilbert. As observações de saúde e sono são comparações com o seu próprio histórico e com referências comuns. Tudo isso é **estimativa** e não substitui a orientação de um treinador ou médico.
