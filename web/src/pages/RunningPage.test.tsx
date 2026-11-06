@@ -112,4 +112,27 @@ describe("RunningPage", () => {
       expect(urls).toContain("/api/sleep?from=2026-05-06&to=2026-11-05");
     });
   });
+
+  it("regroups weeks when the profile's first day of the week arrives after the runs", async () => {
+    let releaseProfile = () => {};
+    const profileReady = new Promise<void>((r) => (releaseProfile = r));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async (url: string) => {
+        if (String(url).startsWith("/api/profile")) {
+          await profileReady;
+          return Response.json({ firstDayOfWeek: "sunday" });
+        }
+        return Response.json({ runs: RUNS, days: [], nights: [] });
+      }),
+    );
+    renderPage();
+    const weekly = await screen.findByRole("table", { name: "Distância por semana (km)" });
+    const firstWeek = () => within(weekly).getAllByRole("row")[1]!;
+    expect(within(firstWeek()).getByText("04/05")).toBeInTheDocument(); // Monday default
+
+    releaseProfile();
+    // The 6-month window starts Wed 06/05: its week starts Sun 03/05 once the profile is in.
+    await vi.waitFor(() => expect(within(firstWeek()).getByText("03/05")).toBeInTheDocument());
+  });
 });
