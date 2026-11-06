@@ -49,7 +49,7 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 - [x] D2 Modo produção: `npm start` serve o web compilado pelo próprio servidor (uma porta, um comando)
 - [x] D3 README de instalação para outras pessoas (Node, baixar, `npm install`, `npm start`, gerar chave)
 ### Checkpoint D ✅ — instalação do zero (clone limpo) seguindo o README, 2026-11-05
-- [ ] R5 Detalhe km a km (download `.FIT`) — **perguntar antes** sobre dependência de parser FIT
+- [x] R5 Detalhe km a km (download `.FIT`, `fit-file-parser` MIT escolhido pelo usuário em 2026-11-05)
 
 ### Phase 3: Saúde (com insights em todas as telas — pedido do usuário, 2026-11-05)
 - [x] T4 Saúde diária (rota + tela) — números conferidos com o app (2026-11-05)

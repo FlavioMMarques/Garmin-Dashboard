@@ -159,7 +159,7 @@
 **Acceptance criteria:**
 - [x] km calculados batem com as voltas automáticas de 1 km do relógio (±2 s, ±1 bpm): 41 km de 8 corridas reais, máx. 1,5 s e 1 bpm; subida com histerese de 2 m, erro médio 0,66 m/km
 - [x] Nenhuma coordenada GPS na resposta (teste)
-- [ ] Cada insight da corrida tem teste que dispara e que não dispara
+- [x] Cada insight da corrida tem teste que dispara e que não dispara
 **Dependencies:** R1 · **Scope:** M
 
 ---

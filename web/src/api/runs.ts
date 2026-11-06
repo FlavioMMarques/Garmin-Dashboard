@@ -41,3 +41,28 @@ export function useRuns(from: string | undefined) {
     placeholderData: keepPreviousData,
   });
 }
+
+/** Mirrors KmSplit in server/src/splits.ts. */
+export interface KmSplit {
+  km: number;
+  distanceM: number;
+  /** Moving time, pauses excluded. */
+  durationS: number;
+  paceSecPerKm: number;
+  avgHr: number | null;
+  cadenceSpm: number | null;
+  elevationGainM: number | null;
+  /** The last stretch, under a full kilometre. */
+  partial: boolean;
+}
+
+/** Kilometre splits of one run; fetched only when `enabled` (the activity file is large). */
+export function useRunSplits(id: number, enabled: boolean) {
+  return useQuery({
+    queryKey: ["run-splits", id],
+    queryFn: ({ signal }) => getJson<{ splits: KmSplit[] }>(`/api/runs/${id}/splits`, signal),
+    select: (r) => r.splits ?? [],
+    enabled,
+    staleTime: Infinity,
+  });
+}

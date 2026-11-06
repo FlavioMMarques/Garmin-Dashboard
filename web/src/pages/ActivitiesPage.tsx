@@ -7,7 +7,9 @@ import {
   formatDuration,
   formatLocalDateTime,
   formatSpeedFor,
+  usesPace,
 } from "../lib/format";
+import { RunSplits } from "../components/RunSplits";
 
 const COLUMNS = [
   "Data",
@@ -18,6 +20,7 @@ const COLUMNS = [
   "Ritmo / velocidade",
   "FC média",
   "Calorias",
+  "Detalhes",
 ];
 const NUMERIC_FROM = 3;
 
@@ -86,17 +89,40 @@ export function ActivitiesPage() {
 }
 
 function ActivityRow({ activity: a }: { activity: ActivitySummary }) {
+  const [open, setOpen] = useState(false);
+  const isRun = usesPace(a.type);
   return (
-    <tr>
-      <td className="num nowrap">{formatLocalDateTime(a.startLocal)}</td>
-      <td className="nowrap">{activityTypeLabel(a.type)}</td>
-      <td>{a.name || "—"}</td>
-      <td className="num">{formatDistance(a.distanceM)}</td>
-      <td className="num">{formatDuration(a.durationS)}</td>
-      <td className="num">{formatSpeedFor(a.type, a.avgSpeedMps)}</td>
-      <td className="num">{a.avgHr != null ? `${Math.round(a.avgHr)} bpm` : "—"}</td>
-      <td className="num">{a.calories != null ? `${Math.round(a.calories)} kcal` : "—"}</td>
-    </tr>
+    <>
+      <tr>
+        <td className="num nowrap">{formatLocalDateTime(a.startLocal)}</td>
+        <td className="nowrap">{activityTypeLabel(a.type)}</td>
+        <td>{a.name || "—"}</td>
+        <td className="num">{formatDistance(a.distanceM)}</td>
+        <td className="num">{formatDuration(a.durationS)}</td>
+        <td className="num">{formatSpeedFor(a.type, a.avgSpeedMps)}</td>
+        <td className="num">{a.avgHr != null ? `${Math.round(a.avgHr)} bpm` : "—"}</td>
+        <td className="num">{a.calories != null ? `${Math.round(a.calories)} kcal` : "—"}</td>
+        <td className="num">
+          {isRun && (
+            <button
+              type="button"
+              aria-expanded={open}
+              aria-controls={`splits-${a.id}`}
+              onClick={() => setOpen((o) => !o)}
+            >
+              Km a km
+            </button>
+          )}
+        </td>
+      </tr>
+      {open && (
+        <tr id={`splits-${a.id}`}>
+          <td colSpan={COLUMNS.length} className="details-cell">
+            <RunSplits id={a.id} name={a.name} />
+          </td>
+        </tr>
+      )}
+    </>
   );
 }
 

@@ -93,4 +93,38 @@ describe("ActivitiesPage", () => {
     expect(alert).toHaveTextContent("Chave da Garmin não configurada");
     expect(screen.getByRole("button", { name: "Tentar de novo" })).toBeInTheDocument();
   });
+
+  it("opens the kilometre splits of a run, with what they show", async () => {
+    const splits = [345, 350, 328, 323, 327, 352].map((pace, i) => ({
+      km: i + 1,
+      distanceM: 1000,
+      durationS: pace,
+      paceSecPerKm: pace,
+      avgHr: 133 + i * 7,
+      cadenceSpm: 168,
+      elevationGainM: 2,
+      partial: false,
+    }));
+    const fetchMock = vi.fn(async (url: string) =>
+      url.includes("/splits")
+        ? Response.json({ splits })
+        : Response.json({ items: [run, ride], start: 0, limit: 20, hasMore: false }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    renderPage();
+
+    await screen.findByText("Corrida de teste");
+    expect(screen.getAllByRole("button", { name: /km a km/i })).toHaveLength(1); // runs only
+    const toggle = screen.getByRole("button", { name: /km a km/i });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(toggle);
+
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    const table = await screen.findByRole("table", { name: /km a km/i });
+    const row4 = within(table).getAllByRole("row")[4]!;
+    expect(within(row4).getByText("5:23 /km")).toBeInTheDocument();
+    expect(within(row4).getByText("154 bpm")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Km mais rápido: km 4" })).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith("/api/runs/1/splits", expect.anything());
+  });
 });
