@@ -93,6 +93,7 @@ export function HeatChart({ runs, refreshing }: { runs: RunSummary[]; refreshing
             dataKey="secPerKm"
             type="number"
             reversed
+            padding={{ top: 4, bottom: 14 }}
             interval={0}
             domain={domain}
             allowDataOverflow

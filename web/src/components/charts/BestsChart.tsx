@@ -82,6 +82,7 @@ export function BestsChart({
                 />
                 <YAxis
                   reversed
+                  padding={{ top: 4, bottom: 14 }}
                   interval={0}
                   domain={["dataMin", "dataMax"]}
                   tickFormatter={(v: number) => formatDuration(v)}

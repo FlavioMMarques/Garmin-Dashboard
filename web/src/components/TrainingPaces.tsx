@@ -16,7 +16,7 @@ export function TrainingPaces({ runs }: { runs: RunSummary[] }) {
   const best = vdotFromRuns(runs);
   if (!best) {
     return (
-      <section className="chart-card" aria-labelledby="paces-title">
+      <section className="chart-card paces-card" aria-labelledby="paces-title">
         <h3 id="paces-title">Ritmos sugeridos e previsões</h3>
         <p className="chart-subtitle">
           Precisa de pelo menos um esforço de 5 km ou mais no período para estimar o VDOT.
@@ -28,7 +28,7 @@ export function TrainingPaces({ runs }: { runs: RunSummary[] }) {
   const source = BEST_DISTANCES.find((d) => d.id === best.distance)!.label;
 
   return (
-    <section className="chart-card" aria-labelledby="paces-title">
+    <section className="chart-card paces-card" aria-labelledby="paces-title">
       <h3 id="paces-title">Ritmos sugeridos e previsões</h3>
       <p className="chart-subtitle">
         Pelas tabelas de Jack Daniels para VDOT {formatDecimal(best.value, 1)} (estimativa, de{" "}
