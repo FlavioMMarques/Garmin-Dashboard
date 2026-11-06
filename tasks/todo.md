@@ -210,13 +210,13 @@
 - [x] Testes e typecheck passam; 3 telas com dados reais
 
 ## Task 6: Tendências de saúde
-**Description:** `/api/trends?days=7|30|90` junta resumo diário + sono + body battery; gráficos de passos, FC repouso, horas de sono, estresse, Body Battery.
+**Description:** (revisto em 2026-11-05: sem rota nova — `/api/daily/range` (H2) e `/api/sleep` (T5) já dão as séries por dia; a tela junta as duas.) Seletor 7/30/90 dias/1 ano; pequenos múltiplos (um eixo por gráfico) com valor do dia + média de 7 dias: passos, FC repouso, horas de sono, VFC noturna, estresse médio, Body Battery máximo.
 **Acceptance criteria:**
-- [ ] Troca 7/30/90 sem recarregar a página
-- [ ] 90 dias funciona (blocos)
+- [x] Troca 7/30/90/1 ano sem recarregar a página
+- [x] 90 dias funciona (blocos)
 **Verification:** teste da junção por data; manual
 **Dependencies:** T4, T5
-**Files:** server/src/routes/trends.ts(+test), web/src/pages/Trends.tsx, web/src/components/charts/*
+**Files:** web/src/lib/trends.ts(+test), web/src/components/charts/TrendChart.tsx, web/src/pages/TrendsPage.tsx(+test)
 **Scope:** M
 
 ## ~~Task 7: Volume semanal de atividades~~ → absorvida pela R2
