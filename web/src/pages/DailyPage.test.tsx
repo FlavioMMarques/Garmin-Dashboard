@@ -107,6 +107,15 @@ describe("DailyPage", () => {
     expect(next).toBeEnabled();
   });
 
+  it("ignores a future date typed in the date field", async () => {
+    const fetchMock = mockApi({ "2026-11-04": day });
+    renderPage();
+    await screen.findByText("5.566");
+    fireEvent.change(screen.getByLabelText("Data"), { target: { value: "2026-12-25" } });
+    expect(screen.getByLabelText("Data")).toHaveValue("2026-11-04");
+    expect(fetchMock).not.toHaveBeenCalledWith("/api/daily?date=2026-12-25", expect.anything());
+  });
+
   it("jumps to a date typed in the date field", async () => {
     const fetchMock = mockApi({ "2026-11-04": day });
     renderPage();

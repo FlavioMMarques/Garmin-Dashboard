@@ -33,7 +33,11 @@ export function DailyPage() {
             type="date"
             value={date}
             max={today}
-            onChange={(e) => e.target.value && setDate(e.target.value)}
+            // `max` does not stop a typed future date; ignore it (and a cleared field).
+            onChange={(e) => {
+              const v = e.target.value;
+              if (v && v <= today) setDate(v);
+            }}
           />
         </label>
         <button
@@ -128,7 +132,10 @@ function DayTiles({ day: d, refreshing }: { day: DailySummary; refreshing: boole
           d.intensityGoal != null && `meta semanal ${n(d.intensityGoal)}`,
         )}
       />
-      <StatTile label="Andares subidos" value={n(d.floorsAscended == null ? null : Math.floor(d.floorsAscended))} />
+      <StatTile
+        label="Andares subidos"
+        value={n(d.floorsAscended == null ? null : Math.floor(d.floorsAscended))}
+      />
       <StatTile label="SpO₂ média" value={d.spo2Avg == null ? DASH : `${n(d.spo2Avg)}%`} />
     </div>
   );
