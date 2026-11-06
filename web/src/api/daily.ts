@@ -64,7 +64,8 @@ export function useDailyRange(from: string, to: string) {
     queryKey: ["daily-range", from, to],
     queryFn: ({ signal }) =>
       getJson<{ days: DayPoint[] }>(`/api/daily/range?from=${from}&to=${to}`, signal),
-    select: (r) => r.days,
+    // Never undefined: with keepPreviousData an undefined result re-renders forever.
+    select: (r) => r.days ?? [],
     placeholderData: keepPreviousData,
     staleTime: 5 * 60_000,
   });

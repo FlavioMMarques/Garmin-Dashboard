@@ -97,7 +97,19 @@ describe("RunningPage", () => {
     expect(summary().getByText("15,0 km")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Tudo" }));
     expect(await summary().findByText("20,0 km")).toBeInTheDocument();
-    expect(String(fetchMock.mock.calls.at(-1)![0])).toBe("/api/runs");
+    // The health × training section fetches too, so look for the call rather than the last one.
+    expect(fetchMock.mock.calls.map(([u]) => String(u))).toContain("/api/runs");
     expect(summary().queryByText(/vs /)).not.toBeInTheDocument();
+  });
+
+  it("adds a health × training section that asks for the period's health history", async () => {
+    const fetchMock = mockApi();
+    renderPage();
+    expect(await screen.findByRole("heading", { name: "Saúde × treino" })).toBeInTheDocument();
+    await vi.waitFor(() => {
+      const urls = fetchMock.mock.calls.map(([u]) => String(u));
+      expect(urls).toContain("/api/daily/range?from=2026-05-06&to=2026-11-05");
+      expect(urls).toContain("/api/sleep?from=2026-05-06&to=2026-11-05");
+    });
   });
 });
