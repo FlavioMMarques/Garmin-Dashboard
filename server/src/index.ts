@@ -5,6 +5,7 @@ import { parseEnv } from "node:util";
 import { serve } from "@hono/node-server";
 import { createApp } from "./app.js";
 import { createGarminClient } from "./garminClient.js";
+import { createGeminiClient } from "./geminiClient.js";
 import { writeApiKey } from "./envFile.js";
 import { createRootApp } from "./root.js";
 
@@ -16,14 +17,15 @@ try {
   console.warn("[server] Ainda sem .env — abra o painel e configure sua chave em Configuração.");
 }
 
-/** Re-read .env on each token exchange so a renewed key is picked up without a restart. */
-function readApiKey(): string | undefined {
+/** Re-read .env on each use so a renewed key is picked up without a restart. */
+function readEnvKey(name: "GARMIN_API_KEY" | "GEMINI_API_KEY"): string | undefined {
   try {
-    return parseEnv(readFileSync(envFile, "utf8")).GARMIN_API_KEY || undefined;
+    return parseEnv(readFileSync(envFile, "utf8"))[name] || undefined;
   } catch {
-    return process.env.GARMIN_API_KEY;
+    return process.env[name];
   }
 }
+const readApiKey = () => readEnvKey("GARMIN_API_KEY");
 
 const baseUrl = process.env.GARMIN_BASE_URL || "https://personal.connectapi.garmin.com";
 const garmin = createGarminClient({
@@ -39,10 +41,21 @@ const settings = {
   saveKey: async (key: string) => writeApiKey(envFile, envExample, key),
 };
 
+// "Pergunte": free-tier Gemini; the model can be changed in .env when Google renames it.
+const gemini = createGeminiClient({
+  apiKey: () => readEnvKey("GEMINI_API_KEY"),
+  model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
+});
+const ask = {
+  gemini,
+  isConfigured: () => Boolean(readEnvKey("GEMINI_API_KEY")),
+  saveKey: async (key: string) => writeApiKey(envFile, envExample, key, "GEMINI_API_KEY"),
+};
+
 // Production: also serve the built web app (npm start builds it first).
 const webDist = fileURLToPath(new URL("../../web/dist", import.meta.url));
 const app = createRootApp(
-  createApp(garmin, { settings }),
+  createApp(garmin, { settings, ask }),
   existsSync(`${webDist}/index.html`) ? webDist : null,
 );
 

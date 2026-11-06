@@ -64,6 +64,15 @@ describe("writeApiKey", () => {
     expect(existsSync(join(d, ".env.tmp"))).toBe(false);
   });
 
+  it("writes another variable without touching the Garmin key", () => {
+    const d = dir();
+    writeFileSync(join(d, ".env"), "GARMIN_API_KEY=garmin\nPORT=8787\n");
+    writeApiKey(join(d, ".env"), join(d, ".env.example"), "AIza-1", "GEMINI_API_KEY");
+    expect(readFileSync(join(d, ".env"), "utf8")).toBe(
+      "GARMIN_API_KEY=garmin\nPORT=8787\nGEMINI_API_KEY=AIza-1\n",
+    );
+  });
+
   it("updates an existing .env in place", () => {
     const d = dir();
     writeFileSync(join(d, ".env"), "GARMIN_API_KEY=old\nPORT=9999\n");

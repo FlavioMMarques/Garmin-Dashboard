@@ -20,14 +20,19 @@ export function upsertEnvValue(content: string, name: string, value: string): st
 }
 
 /**
- * Write GARMIN_API_KEY into .env (created from .env.example when missing). Writes a temp
+ * Write `name=key` into .env (created from .env.example when missing). Writes a temp
  * file and renames it, so a crash never leaves a half-written .env behind.
  */
-export function writeApiKey(envPath: string, examplePath: string, key: string): void {
+export function writeApiKey(
+  envPath: string,
+  examplePath: string,
+  key: string,
+  name = "GARMIN_API_KEY",
+): void {
   if (!isPlausibleApiKey(key)) throw new Error("invalid key format");
   const source = existsSync(envPath) ? envPath : existsSync(examplePath) ? examplePath : null;
   const current = source ? readFileSync(source, "utf8") : "";
   const tmp = `${envPath}.tmp`;
-  writeFileSync(tmp, upsertEnvValue(current, "GARMIN_API_KEY", key), { mode: 0o600 });
+  writeFileSync(tmp, upsertEnvValue(current, name, key), { mode: 0o600 });
   renameSync(tmp, envPath);
 }
