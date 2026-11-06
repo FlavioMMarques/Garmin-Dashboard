@@ -57,7 +57,7 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 - [x] H3 Insights do dia: o dia escolhido comparado com os seus últimos 30 dias, painel na Saúde diária
 ### Checkpoint H ✅ — insights de saúde diária revisados pelo usuário (2026-11-05)
 - [x] T5 Sono (blocos de datas + rota + tela)
-- [x] H4 Insights de sono (duração, regularidade de horários, fases, pontuação vs o seu padrão)
+- [x] H4 Insights de sono (duração, regularidade de horários, fases, pontuação vs o seu padrão) — revisado pelo usuário (2026-11-05)
 - [ ] T6 Tendências de saúde (7/30/90 dias, gráficos) — reaproveita a H2
 - [ ] H5 Insights de tendência (FC repouso, estresse, Body Battery, passos: direção, dia da semana, sequências)
 - [ ] H1 Insights cruzando saúde e treino (sono, Body Battery, FC repouso, HRV × desempenho)
