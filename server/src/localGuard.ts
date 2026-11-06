@@ -1,4 +1,4 @@
-import type { MiddlewareHandler } from "hono";
+import type { Context, MiddlewareHandler } from "hono";
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
 
@@ -25,3 +25,19 @@ export const localOnly: MiddlewareHandler = async (c, next) => {
   }
   await next();
 };
+
+/**
+ * Guard for state-changing POSTs: browsers always send Origin on cross-site requests, so only
+ * this app's origin may write; and a JSON body can't be sent cross-site without a CORS
+ * preflight, which we never allow. Returns the error response, or null when the request is OK.
+ */
+export function rejectCrossSiteWrite(c: Context): Response | null {
+  const origin = c.req.header("origin");
+  if (origin && !isLocalOrigin(origin)) {
+    return c.json({ error: "forbidden", message: "Origem não permitida" }, 403);
+  }
+  if (!c.req.header("content-type")?.startsWith("application/json")) {
+    return c.json({ error: "unsupported", message: "Envie JSON" }, 415);
+  }
+  return null;
+}

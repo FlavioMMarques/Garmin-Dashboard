@@ -1223,3 +1223,68 @@ a {
 .score-grid .stat-value {
   font-size: 1.625rem;
 }
+
+/* Pergunte: a conversation about the dashboard data */
+.ask {
+  max-width: 52rem;
+}
+.ask-thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.ask-msg {
+  max-width: 85%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  line-height: 1.55;
+  /* Answers are plain text: keep the model's line breaks and "- " lists. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ask-user {
+  align-self: flex-end;
+  background: var(--accent-soft);
+}
+.ask-model {
+  align-self: flex-start;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+}
+.ask-thinking {
+  margin: 0;
+}
+.ask-suggestions p {
+  margin: 0 0 var(--space-3);
+}
+.ask-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.ask-chips button {
+  height: auto;
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+}
+.ask-form {
+  display: flex;
+  gap: var(--space-2);
+  align-items: stretch;
+}
+.ask-form textarea {
+  flex: 1;
+  resize: vertical;
+  min-height: 3rem;
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  color: inherit;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+}
+.ask-privacy {
+  margin-top: var(--space-3);
+  font-size: var(--font-size-sm);
+}

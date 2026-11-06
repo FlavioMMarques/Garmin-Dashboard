@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { isPlausibleApiKey } from "../envFile.js";
 import { GarminError, type GarminClient } from "../garminClient.js";
-import { isLocalOrigin } from "../localGuard.js";
+import { rejectCrossSiteWrite } from "../localGuard.js";
 
 export interface SettingsDeps {
   /** Whether a key is currently configured (never the key itself). */
@@ -20,15 +20,8 @@ export function settingsRoutes(garmin: GarminClient, deps: SettingsDeps, onKeySa
   return new Hono()
     .get("/settings", (c) => c.json({ configured: deps.isConfigured() }))
     .post("/settings/key", async (c) => {
-      // CSRF: browsers always send Origin on cross-site POSTs; only this app's origin may write.
-      const origin = c.req.header("origin");
-      if (origin && !isLocalOrigin(origin)) {
-        return c.json({ error: "forbidden", message: "Origem não permitida" }, 403);
-      }
-      // A JSON body can't be sent cross-site without a CORS preflight, which we never allow.
-      if (!c.req.header("content-type")?.startsWith("application/json")) {
-        return c.json({ error: "unsupported", message: "Envie JSON" }, 415);
-      }
+      const rejected = rejectCrossSiteWrite(c);
+      if (rejected) return rejected;
       const body = (await c.req.json().catch(() => null)) as { apiKey?: unknown } | null;
       const key = typeof body?.apiKey === "string" ? body.apiKey.trim() : "";
       if (!isPlausibleApiKey(key)) {

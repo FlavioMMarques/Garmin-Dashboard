@@ -8,12 +8,15 @@ import { profileRoutes } from "./routes/profile.js";
 import { dailyRoutes } from "./routes/daily.js";
 import { sleepRoutes } from "./routes/sleep.js";
 import { settingsRoutes, type SettingsDeps } from "./routes/settings.js";
+import { askRoutes, type AskDeps } from "./routes/ask.js";
 import { localOnly } from "./localGuard.js";
 
 export interface AppOptions {
   now?: () => number;
   /** Enables the settings routes (key status / save). */
   settings?: SettingsDeps;
+  /** Enables "Pergunte" (questions answered by Gemini). */
+  ask?: AskDeps;
 }
 
 const STATUS_BY_CODE: Record<GarminErrorCode, ContentfulStatusCode> = {
@@ -57,6 +60,8 @@ export function createApp(garmin: GarminClient, options: AppOptions = {}) {
       settingsRoutes(garmin, options.settings, () => cacheResets.forEach((reset) => reset())),
     );
   }
+
+  if (options.ask) app.route("/", askRoutes(options.ask));
 
   return app;
 }
