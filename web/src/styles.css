@@ -414,7 +414,7 @@ input[type="date"] {
 /* Stat tiles */
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
   gap: var(--space-3);
 }
 .stat-tile {
@@ -591,6 +591,10 @@ input[type="date"] {
 }
 
 /* Training paces */
+/* Short table beside a tall chart: keep its own height instead of stretching. */
+.chart-grid > .paces-card {
+  align-self: start;
+}
 .paces-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
@@ -1086,8 +1090,9 @@ a {
   background: var(--series-4);
 }
 .phase-legend {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   gap: var(--space-2) var(--space-3);
   list-style: none;
   margin: var(--space-3) 0 0;
