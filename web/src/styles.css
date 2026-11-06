@@ -1183,3 +1183,37 @@ a {
 .split-bar > span.is-fastest {
   background: var(--accent);
 }
+
+/* Chart header with a headline number on the right */
+.chart-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-1) var(--space-4);
+}
+.chart-aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+.chart-aside strong {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.chart-aside span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Tendências: scoreboard of period averages */
+.score-grid {
+  grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
+  margin-bottom: var(--space-2);
+}
+.score-grid .stat-value {
+  font-size: 1.625rem;
+}

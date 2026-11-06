@@ -7,6 +7,8 @@ export interface TableView {
 
 interface Props {
   title: string;
+  /** Headline number shown beside the title (e.g. the 7-day mean). */
+  aside?: ReactNode;
   subtitle?: ReactNode;
   legend?: ReactNode;
   /** Same data as the chart, as a table — tooltips never gate a value. */
@@ -16,10 +18,17 @@ interface Props {
   children: ReactNode;
 }
 
-export function ChartCard({ title, subtitle, legend, table, refreshing, children }: Props) {
+export function ChartCard({ title, aside, subtitle, legend, table, refreshing, children }: Props) {
   return (
     <figure className={`chart-card${refreshing ? " is-refreshing" : ""}`} aria-busy={refreshing}>
-      <h3>{title}</h3>
+      {aside ? (
+        <div className="chart-head">
+          <h3>{title}</h3>
+          <div className="chart-aside">{aside}</div>
+        </div>
+      ) : (
+        <h3>{title}</h3>
+      )}
       {subtitle && <p className="chart-subtitle">{subtitle}</p>}
       {legend}
       {children}

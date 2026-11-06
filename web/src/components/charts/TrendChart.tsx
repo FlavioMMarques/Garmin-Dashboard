@@ -3,6 +3,8 @@ import {
   CartesianGrid,
   ComposedChart,
   Line,
+  ReferenceArea,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -11,7 +13,7 @@ import {
 import { formatDayMonth } from "../../lib/format";
 import { rollingMean, seriesSummary } from "../../lib/trends";
 import { ChartCard, ChartLegend, TooltipBox } from "./ChartCard";
-import { useChartTheme } from "./theme";
+import { useChartTheme, type ChartTheme } from "./theme";
 
 const HEIGHT = 200;
 const AXIS = { tickLine: false, axisLine: false } as const;
@@ -28,6 +30,12 @@ interface Props {
   kind: "bar" | "dot";
   note?: string;
   refreshing?: boolean;
+  /** Series color for the 7-day mean; series1 by default. */
+  color?: keyof ChartTheme;
+  /** A dashed reference line, e.g. the step goal. */
+  reference?: { value: number; label: string };
+  /** A shaded band, e.g. the balanced HRV range. */
+  band?: { low: number; high: number; label: string };
 }
 
 /** Daily value (neutral) plus its 7-day mean (series color), on one axis. */
@@ -42,8 +50,12 @@ export function TrendChart({
   kind,
   note,
   refreshing,
+  color = "series1",
+  reference,
+  band,
 }: Props) {
   const theme = useChartTheme();
+  const stroke = theme[color];
   const avg = rollingMean(values);
   const rows = dates.map((date, i) => ({ date, value: values[i] ?? null, avg: avg[i] ?? null }));
   const s = seriesSummary(values);
@@ -69,11 +81,23 @@ export function TrendChart({
         </>
       }
       refreshing={refreshing}
+      aside={
+        s.last7 != null && (
+          <>
+            <strong>{format(s.last7)}</strong>
+            <span>média dos últimos 7 dias</span>
+          </>
+        )
+      }
       legend={
         <ChartLegend
           items={[
             { label: "Dia", color: theme.muted, shape: kind === "bar" ? "square" : "dot" },
-            { label: "Média de 7 dias", color: theme.series1, shape: "line" },
+            { label: "Média de 7 dias", color: stroke, shape: "line" },
+            ...(band ? [{ label: band.label, color: theme.grid, shape: "square" as const }] : []),
+            ...(reference
+              ? [{ label: reference.label, color: theme.text, shape: "line" as const }]
+              : []),
           ]}
         />
       }
@@ -91,6 +115,15 @@ export function TrendChart({
       <ResponsiveContainer width="100%" height={HEIGHT}>
         <ComposedChart data={rows} margin={{ top: 8, right: 4, bottom: 0, left: 0 }}>
           <CartesianGrid vertical={false} stroke={theme.grid} />
+          {band && (
+            <ReferenceArea
+              y1={band.low}
+              y2={band.high}
+              fill={theme.grid}
+              fillOpacity={0.7}
+              ifOverflow="extendDomain"
+            />
+          )}
           <XAxis
             dataKey="date"
             tickFormatter={formatDayMonth}
@@ -123,7 +156,7 @@ export function TrendChart({
                     {
                       value: r.avg == null ? "—" : format(r.avg),
                       label: "média de 7 dias",
-                      color: theme.series1,
+                      color: stroke,
                     },
                   ]}
                 />
@@ -141,9 +174,17 @@ export function TrendChart({
               isAnimationActive={false}
             />
           )}
+          {reference && (
+            <ReferenceLine
+              y={reference.value}
+              stroke={theme.text}
+              strokeDasharray="5 4"
+              ifOverflow="extendDomain"
+            />
+          )}
           <Line
             dataKey="avg"
-            stroke={theme.series1}
+            stroke={stroke}
             strokeWidth={2}
             dot={false}
             connectNulls={false}
