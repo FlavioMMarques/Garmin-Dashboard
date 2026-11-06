@@ -1,9 +1,10 @@
 import type { Insight, InsightTone } from "../lib/insights";
 
-const GROUPS: { tone: InsightTone; icon: string; label: string }[] = [
-  { tone: "attention", icon: "!", label: "Atenção" },
-  { tone: "positive", icon: "✓", label: "Pontos positivos" },
-  { tone: "info", icon: "i", label: "Observações" },
+// `tag` repeats the group heading on each card (aria-hidden: the heading already says it).
+const GROUPS: { tone: InsightTone; icon: string; label: string; tag: string }[] = [
+  { tone: "attention", icon: "!", label: "Atenção", tag: "Atenção" },
+  { tone: "positive", icon: "✓", label: "Pontos positivos", tag: "Ponto positivo" },
+  { tone: "info", icon: "i", label: "Observações", tag: "Observação" },
 ];
 
 /**
@@ -31,8 +32,9 @@ export function InsightsPanel({
             <ul className="insights">
               {items.map((i) => (
                 <li key={i.id} className={`insight insight-${i.tone}`}>
-                  <span className="insight-icon" aria-hidden="true">
-                    {g.icon}
+                  <span className="insight-tag" aria-hidden="true">
+                    <span className="insight-icon">{g.icon}</span>
+                    {g.tag}
                   </span>
                   <div>
                     <h4 className="insight-title">{i.title}</h4>
