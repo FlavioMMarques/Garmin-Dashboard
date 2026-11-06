@@ -11,12 +11,18 @@ const clockMinutes = (local: string) =>
   Number(local.slice(11, 13)) * 60 + Number(local.slice(14, 16));
 
 /**
- * Average time of day, in minutes after midnight. Times are measured from noon so a
- * bedtime of 23:30 and one of 00:30 average to 00:00, not 12:00.
+ * Minutes since the previous noon, so night-time clock times compare and average
+ * without a jump at midnight (23:30 → 690, 00:30 → 750).
  */
+export const minutesFromNoon = (local: string) => (clockMinutes(local) - NOON + DAY_MIN) % DAY_MIN;
+
+/** Inverse of minutesFromNoon: back to minutes after midnight. */
+export const clockFromNoon = (fromNoon: number) => Math.round(fromNoon + NOON) % DAY_MIN;
+
+/** Average time of day, in minutes after midnight; 23:30 and 00:30 average to 00:00. */
 export function averageClock(locals: string[]): number | null {
-  const fromNoon = mean(locals.map((l) => (clockMinutes(l) - NOON + DAY_MIN) % DAY_MIN));
-  return fromNoon == null ? null : Math.round(fromNoon + NOON) % DAY_MIN;
+  const fromNoon = mean(locals.map(minutesFromNoon));
+  return fromNoon == null ? null : clockFromNoon(fromNoon);
 }
 
 export function formatClock(minutes: number): string {

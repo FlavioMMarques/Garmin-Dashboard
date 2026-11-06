@@ -116,4 +116,15 @@ describe("SleepPage", () => {
     renderPage();
     expect(await screen.findByText(/nenhuma noite registrada/i)).toBeInTheDocument();
   });
+
+  it("shows what the nights reveal", async () => {
+    mockApi(); // 7 h a night against an 8 h need
+    renderPage();
+    expect(
+      await screen.findByRole("heading", { name: "O que o seu sono mostra" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /Dormindo 1 h 00 min a menos/ }),
+    ).toBeInTheDocument();
+  });
 });

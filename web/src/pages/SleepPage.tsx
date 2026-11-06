@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useSleep } from "../api/sleep";
 import { SleepPhasesChart } from "../components/charts/SleepPhasesChart";
 import { ErrorBanner } from "../components/ErrorBanner";
+import { InsightsPanel } from "../components/InsightsPanel";
 import { StatTile } from "../components/StatTile";
 import { formatTotalTime } from "../lib/format";
 import { localDateKey, shiftDate } from "../lib/health";
 import { formatClock, summarizeNights } from "../lib/sleep";
+import { generateSleepInsights } from "../lib/sleepInsights";
 
 const PERIODS = [7, 30, 90] as const;
 type Period = (typeof PERIODS)[number];
@@ -107,6 +109,11 @@ function SleepContent({
           detail="dormir → acordar"
         />
       </div>
+      <h2 className="section-title">O que o seu sono mostra</h2>
+      <InsightsPanel
+        insights={generateSleepInsights({ nights })}
+        emptyMessage="Ainda não há noites suficientes neste período para observações sobre o seu sono."
+      />
       <div className="chart-grid">
         <SleepPhasesChart nights={nights} refreshing={refreshing} />
       </div>
