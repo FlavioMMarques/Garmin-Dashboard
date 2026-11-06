@@ -57,7 +57,12 @@ describe("GET /api/daily", () => {
   it("maps a day without data to nulls", async () => {
     const { app } = setup(fixture.empty);
     const body = await (await app.request("/api/daily?date=2012-01-01")).json();
-    expect(body).toMatchObject({ date: "2012-01-01", hasData: false, steps: null, restingHr: null });
+    expect(body).toMatchObject({
+      date: "2012-01-01",
+      hasData: false,
+      steps: null,
+      restingHr: null,
+    });
   });
 
   it("does not leak account or device identifiers", async () => {
