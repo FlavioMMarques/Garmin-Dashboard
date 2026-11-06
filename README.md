@@ -64,12 +64,22 @@ Pronto: a aba **Corrida** mostra seus treinos.
 
 O painel avisa que a chave foi recusada. Gere uma nova no Garmin Connect e cole em **Configuração**. Não precisa reiniciar nada.
 
+### Pergunte (IA, opcional)
+
+A aba **Pergunte** responde perguntas sobre os seus dados, como "meu volume semanal está subindo rápido demais?". Ela usa o Gemini, do Google, no plano gratuito:
+
+1. Crie uma chave em <https://aistudio.google.com/apikey> (basta uma conta Google).
+2. Cole a chave na aba **Pergunte** e salve. Ela é testada com o Google antes de ser gravada no `.env`.
+
+Se o Google trocar o nome do modelo, defina `GEMINI_MODEL` no `.env` (o padrão é `gemini-3.8-flash`).
+
 ## Privacidade
 
 - **Onde fica a chave:** só no arquivo `.env` da pasta do projeto, no seu computador. Ela é usada apenas pelo servidor local para falar com a Garmin e **nunca é enviada para o navegador**.
 - **Quem acessa o painel:** só o seu computador. O servidor escuta em `127.0.0.1`, então outros aparelhos da rede não conseguem abrir o painel. Ele também recusa pedidos vindos de outros sites.
 - **O que fica gravado:** nenhum dado de treino é salvo em disco. Os dados são buscados na Garmin quando você abre o painel e ficam em memória por alguns minutos.
 - **Km a km:** ao abrir o detalhe de uma corrida, o servidor local baixa da Garmin o arquivo original da atividade (`.FIT`, que inclui o trajeto GPS) e calcula os quilômetros ali mesmo, em memória. Só o resultado (ritmo, FC, cadência e subida por km) vai para a tela; **as coordenadas GPS nunca chegam ao navegador** e o arquivo não é salvo.
+- **Pergunte (IA):** é o único recurso que envia dados para fora da Garmin. Só quando você faz uma pergunta, o painel manda ao Google um resumo em texto: corridas dos últimos 12 meses e saúde e sono dos últimos 90 dias (sem GPS). No plano gratuito, o Google pode usar esse conteúdo para melhorar os produtos dele, e revisores humanos podem lê-lo. Sem a chave do Gemini, nada é enviado.
 - **Se for compartilhar a pasta:** nunca envie o `.env` para outra pessoa nem para o GitHub. Ele já está no `.gitignore`.
 
 ## Problemas comuns

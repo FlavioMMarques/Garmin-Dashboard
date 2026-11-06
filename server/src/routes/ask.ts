@@ -39,6 +39,7 @@ export function systemPrompt(context: string): string {
     "Os números já foram calculados pelo painel: prefira citá-los a refazer contas.",
     "Correlações nos dados não provam causa; diga isso quando relevante.",
     "Não dê diagnóstico médico. Diante de sinais preocupantes (dor, FC muito fora do padrão), sugira procurar um profissional.",
+    'Formate em texto simples: parágrafos curtos e listas com "- "; sem tabelas, títulos ou negrito.',
     "",
     "=== DADOS DO PAINEL ===",
     context,

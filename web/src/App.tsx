@@ -9,6 +9,7 @@ import { RunningPage } from "./pages/RunningPage";
 import { DailyPage } from "./pages/DailyPage";
 import { SleepPage } from "./pages/SleepPage";
 import { TrendsPage } from "./pages/TrendsPage";
+import { AskPage } from "./pages/AskPage";
 
 /** Stroke icons (decorative: every link carries its label as text). */
 const ICONS: Record<string, ReactNode> = {
@@ -30,6 +31,9 @@ const ICONS: Record<string, ReactNode> = {
     <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8z" />
   ),
   sono: <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />,
+  pergunte: (
+    <path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12zM8.5 12h.01M12 12h.01M15.5 12h.01" />
+  ),
   configuracao: (
     <>
       <circle cx="12" cy="12" r="3" />
@@ -62,6 +66,7 @@ const PAGES = {
   atividades: { label: "Atividades", Component: ActivitiesPage },
   saude: { label: "Saúde diária", Component: DailyPage },
   sono: { label: "Sono", Component: SleepPage },
+  pergunte: { label: "Pergunte", Component: AskPage },
   configuracao: { label: "Configuração", Component: SettingsPage },
 } as const;
 
