@@ -4,6 +4,7 @@ import { GarminError, type GarminClient, type GarminErrorCode } from "./garminCl
 import { activitiesRoutes } from "./routes/activities.js";
 import { runsRoutes } from "./routes/runs.js";
 import { profileRoutes } from "./routes/profile.js";
+import { dailyRoutes } from "./routes/daily.js";
 import { settingsRoutes, type SettingsDeps } from "./routes/settings.js";
 import { localOnly } from "./localGuard.js";
 
@@ -45,6 +46,7 @@ export function createApp(garmin: GarminClient, options: AppOptions = {}) {
   app.route("/", activitiesRoutes(garmin));
   app.route("/", runsRoutes(garmin, { ...options, onReset }));
   app.route("/", profileRoutes(garmin, { ...options, onReset }));
+  app.route("/", dailyRoutes(garmin, { ...options, onReset }));
   if (options.settings) {
     app.route(
       "/",
