@@ -34,4 +34,9 @@ describe("InsightsPanel", () => {
     render(<InsightsPanel insights={[]} />);
     expect(screen.getByText(/Ainda não há dados suficientes/)).toBeInTheDocument();
   });
+
+  it("accepts a screen-specific empty message", () => {
+    render(<InsightsPanel insights={[]} emptyMessage="Sem histórico para comparar este dia." />);
+    expect(screen.getByText("Sem histórico para comparar este dia.")).toBeInTheDocument();
+  });
 });

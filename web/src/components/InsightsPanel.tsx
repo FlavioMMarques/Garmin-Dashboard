@@ -10,14 +10,14 @@ const GROUPS: { tone: InsightTone; icon: string; label: string }[] = [
  * Every observation about the selected period, grouped by tone. Tone is carried by the
  * group heading (text) and an icon; status colors only ever accompany them.
  */
-export function InsightsPanel({ insights }: { insights: Insight[] }) {
-  if (insights.length === 0) {
-    return (
-      <p className="panel muted">
-        Ainda não há dados suficientes neste período para observações sobre os seus treinos.
-      </p>
-    );
-  }
+export function InsightsPanel({
+  insights,
+  emptyMessage = "Ainda não há dados suficientes neste período para observações sobre os seus treinos.",
+}: {
+  insights: Insight[];
+  emptyMessage?: string;
+}) {
+  if (insights.length === 0) return <p className="panel muted">{emptyMessage}</p>;
   return (
     <div className="insight-groups">
       {GROUPS.map((g) => {
