@@ -35,6 +35,77 @@ import {
 } from "../components/charts/VolumeCharts";
 
 const PACE_WINDOW = 5;
+/** Weeks drawn in the hero tile's sparkline. */
+const SPARK_WEEKS = 12;
+
+const SECTIONS = [
+  { id: "secao-evolucao", label: "Evolução" },
+  { id: "secao-marcas", label: "Melhores marcas" },
+  { id: "secao-treino", label: "Treino" },
+  { id: "secao-dinamica", label: "Dinâmica" },
+  { id: "secao-volume", label: "Volume" },
+] as const;
+
+const dayMonth = new Intl.DateTimeFormat("pt-BR", { day: "numeric", month: "short" });
+const dayMonthYear = new Intl.DateTimeFormat("pt-BR", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+});
+/** "YYYY-MM-DD" → local Date. */
+const parseIso = (iso: string) => {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(y!, m! - 1, d!);
+};
+/** "6 de mai. – 5 de nov. de 2026" without the "de" clutter: "6 mai – 5 nov 2026". */
+const shortDate = (fmt: Intl.DateTimeFormat, d: Date) =>
+  fmt.format(d).replace(/ de /g, " ").replace(/\./g, "");
+
+function scrollToSection(id: string) {
+  const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  document.getElementById(id)?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+}
+
+/** Last weeks' km as small bars; the current week stands out. */
+function WeeklySpark({ weeks }: { weeks: { weekStart: string; km: number }[] }) {
+  const last = weeks.slice(-SPARK_WEEKS);
+  if (last.length < 2) return null;
+  const max = Math.max(...last.map((w) => w.km), 1);
+  const slot = 240 / last.length;
+  const current = last.at(-1)!;
+  const kmFmt = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 });
+  return (
+    <div className="hero-spark">
+      <svg
+        viewBox="0 0 240 56"
+        width="100%"
+        height="56"
+        preserveAspectRatio="none"
+        role="img"
+        aria-label={`Volume das últimas ${last.length} semanas; esta semana, ${kmFmt.format(current.km)} km`}
+      >
+        {last.map((w, i) => {
+          const h = Math.max((w.km / max) * 52, w.km > 0 ? 2 : 0);
+          return (
+            <rect
+              key={w.weekStart}
+              x={i * slot + slot * 0.15}
+              y={56 - h}
+              width={slot * 0.7}
+              height={h}
+              rx="2"
+              className={i === last.length - 1 ? "spark-current" : "spark-bar"}
+            />
+          );
+        })}
+      </svg>
+      <div className="hero-spark-legend" aria-hidden="true">
+        <span>{last.length} semanas atrás</span>
+        <span>Esta semana · {kmFmt.format(current.km)} km</span>
+      </div>
+    </div>
+  );
+}
 
 const PREVIOUS_LABEL: Record<Period, string> = {
   "3m": "vs 3 meses anteriores",
@@ -97,20 +168,28 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
 
   return (
     <section>
-      <h1>Corrida</h1>
-
-      <div className="toolbar" role="group" aria-label="Período">
-        {PERIODS.map((p) => (
-          <button
-            key={p.id}
-            type="button"
-            aria-pressed={p.id === period}
-            onClick={() => setPeriod(p.id)}
-          >
-            {p.label}
-          </button>
-        ))}
-        {isFetching && !isPending && <span className="muted">carregando…</span>}
+      <div className="page-header">
+        <div>
+          <h1>Corrida</h1>
+          <p className="page-subtitle">
+            {range.from
+              ? `${shortDate(dayMonth, parseIso(range.from))} – ${shortDate(dayMonthYear, today)} · comparado com o período anterior`
+              : "Todo o histórico"}
+          </p>
+        </div>
+        <div className="toolbar" role="group" aria-label="Período">
+          {PERIODS.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              aria-pressed={p.id === period}
+              onClick={() => setPeriod(p.id)}
+            >
+              {p.label}
+            </button>
+          ))}
+          {isFetching && !isPending && <span className="muted">carregando…</span>}
+        </div>
       </div>
 
       {error ? (
@@ -126,46 +205,61 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
       ) : (
         <>
           <div
-            className={`stat-grid${isPlaceholderData ? " is-refreshing" : ""}`}
+            className={`kpi-row${isPlaceholderData ? " is-refreshing" : ""}`}
             role="group"
             aria-label="Resumo do período"
           >
             <StatTile
-              label="Corridas"
-              value={String(totals.count)}
-              delta={hasBaseline ? percentDelta(totals.count, prevTotals.count) : null}
-              deltaLabel={vs}
-            />
-            <StatTile
+              variant="hero"
               label="Distância"
               value={formatKmTotal(totals.distanceM)}
               delta={hasBaseline ? percentDelta(totals.distanceM, prevTotals.distanceM) : null}
               deltaLabel={vs}
-            />
-            <StatTile
-              label="Tempo correndo"
-              value={formatTotalTime(totals.movingS)}
-              delta={hasBaseline ? percentDelta(totals.movingS, prevTotals.movingS) : null}
-              deltaLabel={vs}
-            />
-            <StatTile
-              label="Ritmo médio"
-              value={formatPace(totals.avgSpeedMps)}
-              delta={hasBaseline ? paceDelta(totals.avgSpeedMps, prevTotals.avgSpeedMps) : null}
-              deltaLabel={vs}
-            />
-            <StatTile
-              label="Maior corrida"
-              value={formatDistance(totals.longestM)}
-              delta={hasBaseline ? percentDelta(totals.longestM, prevTotals.longestM) : null}
-              deltaLabel={vs}
-            />
+            >
+              <WeeklySpark weeks={charts.weeks} />
+            </StatTile>
+            <div className="kpi-grid">
+              <StatTile
+                label="Corridas"
+                value={String(totals.count)}
+                delta={hasBaseline ? percentDelta(totals.count, prevTotals.count) : null}
+                deltaLabel={vs}
+              />
+              <StatTile
+                label="Tempo correndo"
+                value={formatTotalTime(totals.movingS)}
+                delta={hasBaseline ? percentDelta(totals.movingS, prevTotals.movingS) : null}
+                deltaLabel={vs}
+              />
+              <StatTile
+                label="Ritmo médio"
+                value={formatPace(totals.avgSpeedMps)}
+                delta={hasBaseline ? paceDelta(totals.avgSpeedMps, prevTotals.avgSpeedMps) : null}
+                deltaLabel={vs}
+              />
+              <StatTile
+                label="Maior corrida"
+                value={formatDistance(totals.longestM)}
+                delta={hasBaseline ? percentDelta(totals.longestM, prevTotals.longestM) : null}
+                deltaLabel={vs}
+              />
+            </div>
           </div>
           <h2 className="section-title">O que seus treinos mostram</h2>
-          <InsightsPanel insights={insights} />
+          <InsightsPanel insights={insights} limit={3} />
           <CrossInsights runs={current} from={range.from} today={todayIso} />
 
-          <h2 className="section-title">Evolução</h2>
+          <nav className="section-nav" aria-label="Ir para a seção">
+            {SECTIONS.map((s) => (
+              <button key={s.id} type="button" onClick={() => scrollToSection(s.id)}>
+                {s.label}
+              </button>
+            ))}
+          </nav>
+
+          <h2 className="section-title" id="secao-evolucao">
+            Evolução
+          </h2>
           <div className="chart-grid">
             <PaceChart points={charts.pace} window={PACE_WINDOW} refreshing={isPlaceholderData} />
             <EfficiencyChart
@@ -175,14 +269,18 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
             />
           </div>
 
-          <h2 className="section-title">Melhores marcas</h2>
+          <h2 className="section-title" id="secao-marcas">
+            Melhores marcas
+          </h2>
           <BestEffortTiles current={current} previous={previous} deltaLabel={vs} />
           <div className="chart-grid">
             <BestsChart series={charts.bests} refreshing={isPlaceholderData} />
             <TrainingPaces runs={current} />
           </div>
 
-          <h2 className="section-title">Treino</h2>
+          <h2 className="section-title" id="secao-treino">
+            Treino
+          </h2>
           <div className="chart-grid">
             <ZonesChart
               weeks={charts.zones}
@@ -193,12 +291,16 @@ export function RunningPage({ today = new Date() }: { today?: Date }) {
             <HeatChart runs={current} refreshing={isPlaceholderData} />
           </div>
 
-          <h2 className="section-title">Dinâmica</h2>
+          <h2 className="section-title" id="secao-dinamica">
+            Dinâmica
+          </h2>
           <div className="chart-grid">
             <DynamicsChart runs={current} window={PACE_WINDOW} refreshing={isPlaceholderData} />
           </div>
 
-          <h2 className="section-title">Volume</h2>
+          <h2 className="section-title" id="secao-volume">
+            Volume
+          </h2>
           <div className="chart-grid">
             <WeeklyVolumeChart
               weeks={charts.weeks}

@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { Delta } from "../lib/delta";
 
 const ARROWS = { up: "▲", down: "▼", flat: "■" } as const;
@@ -11,11 +12,23 @@ interface Props {
   delta?: Delta | null;
   /** What the delta compares against, e.g. "vs 6 meses anteriores". */
   deltaLabel?: string;
+  /** "hero": the screen's headline number — larger, on a dark surface. */
+  variant?: "default" | "hero";
+  /** Extra content under the numbers, e.g. a sparkline in the hero tile. */
+  children?: ReactNode;
 }
 
-export function StatTile({ label, value, detail, delta, deltaLabel }: Props) {
+export function StatTile({
+  label,
+  value,
+  detail,
+  delta,
+  deltaLabel,
+  variant = "default",
+  children,
+}: Props) {
   return (
-    <div className="stat-tile">
+    <div className={`stat-tile${variant === "hero" ? " stat-tile-hero" : ""}`}>
       <div className="stat-label">{label}</div>
       <div className="stat-value">{value}</div>
       {detail && <div className="stat-detail">{detail}</div>}
@@ -27,6 +40,7 @@ export function StatTile({ label, value, detail, delta, deltaLabel }: Props) {
           {deltaLabel && <span className="stat-delta-label">{deltaLabel}</span>}
         </div>
       )}
+      {children}
     </div>
   );
 }

@@ -779,3 +779,125 @@ a {
 .run-splits .data-table {
   max-width: 40rem;
 }
+
+/* Page header: title + subtitle on the left, period picker on the right */
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+.page-header h1 {
+  margin: 0;
+}
+.page-subtitle {
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+}
+.page-header .toolbar {
+  margin-bottom: 0;
+}
+
+/* KPI row: one headline tile + a 2×2 grid of the rest */
+.kpi-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  transition: opacity 0.2s;
+}
+.kpi-row.is-refreshing {
+  opacity: 0.55;
+}
+.kpi-grid {
+  flex: 3 1 440px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+@media (max-width: 480px) {
+  .kpi-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.stat-tile-hero {
+  flex: 2 1 360px;
+  display: flex;
+  flex-direction: column;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  background: var(--hero-bg);
+  color: var(--hero-text);
+}
+.stat-tile-hero .stat-label,
+.stat-tile-hero .stat-delta-label,
+.stat-tile-hero .stat-detail {
+  color: var(--hero-muted);
+}
+.stat-tile-hero .stat-value {
+  font-size: clamp(2.75rem, 6vw, 4rem);
+  line-height: 1;
+  margin: var(--space-2) 0;
+}
+.stat-tile-hero .tone-good {
+  color: #7fdca4;
+}
+.stat-tile-hero .tone-bad {
+  color: #ff9c9c;
+}
+.hero-spark {
+  margin-top: auto;
+  padding-top: var(--space-4);
+}
+.hero-spark .spark-bar {
+  fill: #3a4350;
+}
+.hero-spark .spark-current {
+  fill: #5aa7f0;
+}
+.hero-spark-legend {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  font-size: 0.75rem;
+  color: var(--hero-muted);
+}
+
+/* Jump links between the long page's sections */
+.section-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: 2.5rem;
+  border-bottom: 1px solid var(--border-default);
+}
+.section-nav button {
+  min-height: 44px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-muted);
+}
+.section-nav button:hover {
+  color: var(--text-primary);
+  box-shadow: inset 0 -2px 0 var(--text-primary);
+}
+.section-title[id] {
+  scroll-margin-top: var(--space-4);
+}
+
+/* Text-style button (e.g. "Ver todas as observações") */
+.link-button {
+  justify-self: start;
+  min-height: 36px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
