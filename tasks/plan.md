@@ -62,7 +62,7 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 - [x] H5 Insights de tendência (FC repouso, estresse, Body Battery, passos: direção, dia da semana, sequências) — revisado pelo usuário (2026-11-05)
 - [x] H1 Insights cruzando saúde e treino (sono, Body Battery, FC repouso, HRV × desempenho)
 - ~~T7 Volume semanal de atividades~~ → absorvida pela R2
-### Checkpoint C — critérios de sucesso do SPEC
+### Checkpoint C ✅ — critérios de sucesso do SPEC (2026-11-05)
 
 ## Risks and Mitigations
 | Risco | Impacto | Mitigação |
