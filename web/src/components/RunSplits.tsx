@@ -34,6 +34,16 @@ export function RunSplits({ id, name }: { id: number; name: string }) {
     return <p className="muted">Esta corrida não tem distância registrada para dividir em km.</p>;
   }
 
+  // Pace bars: longest = fastest km, scaled between the slowest and fastest full km.
+  const paces = data.filter((s) => !s.partial).map((s) => s.paceSecPerKm);
+  const fastest = paces.length ? Math.min(...paces) : null;
+  const slowest = paces.length ? Math.max(...paces) : null;
+  const barWidth = (pace: number | null) => {
+    if (pace == null || fastest == null || slowest == null) return 0;
+    if (slowest === fastest) return 100;
+    return 25 + (75 * (slowest - pace)) / (slowest - fastest);
+  };
+
   return (
     <div className="run-splits">
       <div className="table-wrap">
@@ -52,7 +62,15 @@ export function RunSplits({ id, name }: { id: number; name: string }) {
             {data.map((s) => (
               <tr key={s.km}>
                 <th scope="row">{kmLabel(s)}</th>
-                <td className="num">{paceText(s.paceSecPerKm)}</td>
+                <td className="num split-pace">
+                  <span className="split-bar" aria-hidden="true">
+                    <span
+                      className={s.paceSecPerKm === fastest ? "is-fastest" : undefined}
+                      style={{ width: `${barWidth(s.partial ? null : s.paceSecPerKm)}%` }}
+                    />
+                  </span>
+                  <span>{paceText(s.paceSecPerKm)}</span>
+                </td>
                 <td className="num">{s.avgHr == null ? DASH : `${s.avgHr} bpm`}</td>
                 <td className="num">
                   {s.cadenceSpm == null ? DASH : `${s.cadenceSpm} passos/min`}

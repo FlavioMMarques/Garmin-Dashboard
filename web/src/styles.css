@@ -1112,3 +1112,74 @@ a {
 .phase-legend strong {
   font-variant-numeric: tabular-nums;
 }
+
+/* Atividades */
+.activities-table td {
+  vertical-align: middle;
+}
+.week-row th {
+  padding-top: var(--space-4);
+  background: var(--bg-page);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+}
+.week-row th > span {
+  margin-right: var(--space-3);
+}
+.data-table tbody tr.week-row:hover {
+  background: var(--bg-page);
+}
+.activity-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 14rem;
+}
+.activity-name {
+  font-weight: 600;
+}
+.activity-meta {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+.sport-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+}
+.sport-run {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.activities-table button.is-open {
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--bg-surface);
+}
+.split-pace {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+.split-bar {
+  flex: 1 1 8rem;
+  max-width: 10rem;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--bg-subtle);
+}
+.split-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: var(--zone-1);
+}
+.split-bar > span.is-fastest {
+  background: var(--accent);
+}
