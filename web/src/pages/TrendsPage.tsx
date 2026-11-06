@@ -3,8 +3,10 @@ import { useDailyRange, type DayPoint } from "../api/daily";
 import { useSleep, type Night } from "../api/sleep";
 import { TrendChart } from "../components/charts/TrendChart";
 import { ErrorBanner } from "../components/ErrorBanner";
+import { InsightsPanel } from "../components/InsightsPanel";
 import { formatTotalTime } from "../lib/format";
 import { localDateKey, shiftDate } from "../lib/health";
+import { generateTrendInsights } from "../lib/trendInsights";
 
 const PERIODS = [
   { days: 7, label: "7 dias" },
@@ -95,59 +97,66 @@ function TrendCharts({
     );
   }
   return (
-    <div className="chart-grid">
-      <TrendChart
-        title="Passos por dia"
-        kind="bar"
-        dates={days.map((d) => d.date)}
-        values={days.map((d) => d.steps)}
-        format={(v) => int.format(v)}
-        tickFormat={thousands}
-        refreshing={refreshing}
+    <>
+      <h2 className="section-title">O que as suas tendências mostram</h2>
+      <InsightsPanel
+        insights={generateTrendInsights({ days, nights })}
+        emptyMessage="Ainda não há dados suficientes neste período para observações de tendência (a maioria precisa de pelo menos 3 semanas)."
       />
-      <TrendChart
-        title="FC em repouso (bpm)"
-        kind="dot"
-        dates={days.map((d) => d.date)}
-        values={days.map((d) => d.restingHr)}
-        format={unit("bpm")}
-        refreshing={refreshing}
-      />
-      <TrendChart
-        title="Sono por noite"
-        kind="bar"
-        dates={nights.map((n) => n.date)}
-        values={nights.map((n) => (n.sleepSeconds == null ? null : n.sleepSeconds / 3600))}
-        format={(h) => formatTotalTime(h * 3600)}
-        tickFormat={(h) => `${int.format(h)} h`}
-        note="Cada noite aparece na data em que você acordou."
-        refreshing={refreshing}
-      />
-      <TrendChart
-        title="VFC noturna (ms)"
-        kind="dot"
-        dates={nights.map((n) => n.date)}
-        values={nights.map((n) => n.hrvLastNight)}
-        format={unit("ms")}
-        refreshing={refreshing}
-      />
-      <TrendChart
-        title="Estresse médio do dia (0–100)"
-        kind="dot"
-        dates={days.map((d) => d.date)}
-        values={days.map((d) => d.stressAvg)}
-        format={(v) => int.format(v)}
-        refreshing={refreshing}
-      />
-      <TrendChart
-        title="Body Battery máximo do dia"
-        kind="dot"
-        dates={days.map((d) => d.date)}
-        values={days.map((d) => d.bodyBatteryMax)}
-        format={(v) => int.format(v)}
-        note="O pico costuma vir logo depois do sono: mostra quanto a noite recarregou."
-        refreshing={refreshing}
-      />
-    </div>
+      <div className="chart-grid">
+        <TrendChart
+          title="Passos por dia"
+          kind="bar"
+          dates={days.map((d) => d.date)}
+          values={days.map((d) => d.steps)}
+          format={(v) => int.format(v)}
+          tickFormat={thousands}
+          refreshing={refreshing}
+        />
+        <TrendChart
+          title="FC em repouso (bpm)"
+          kind="dot"
+          dates={days.map((d) => d.date)}
+          values={days.map((d) => d.restingHr)}
+          format={unit("bpm")}
+          refreshing={refreshing}
+        />
+        <TrendChart
+          title="Sono por noite"
+          kind="bar"
+          dates={nights.map((n) => n.date)}
+          values={nights.map((n) => (n.sleepSeconds == null ? null : n.sleepSeconds / 3600))}
+          format={(h) => formatTotalTime(h * 3600)}
+          tickFormat={(h) => `${int.format(h)} h`}
+          note="Cada noite aparece na data em que você acordou."
+          refreshing={refreshing}
+        />
+        <TrendChart
+          title="VFC noturna (ms)"
+          kind="dot"
+          dates={nights.map((n) => n.date)}
+          values={nights.map((n) => n.hrvLastNight)}
+          format={unit("ms")}
+          refreshing={refreshing}
+        />
+        <TrendChart
+          title="Estresse médio do dia (0–100)"
+          kind="dot"
+          dates={days.map((d) => d.date)}
+          values={days.map((d) => d.stressAvg)}
+          format={(v) => int.format(v)}
+          refreshing={refreshing}
+        />
+        <TrendChart
+          title="Body Battery máximo do dia"
+          kind="dot"
+          dates={days.map((d) => d.date)}
+          values={days.map((d) => d.bodyBatteryMax)}
+          format={(v) => int.format(v)}
+          note="O pico costuma vir logo depois do sono: mostra quanto a noite recarregou."
+          refreshing={refreshing}
+        />
+      </div>
+    </>
   );
 }

@@ -219,6 +219,13 @@
 **Files:** web/src/lib/trends.ts(+test), web/src/components/charts/TrendChart.tsx, web/src/pages/TrendsPage.tsx(+test)
 **Scope:** M
 
+## H5: Insights de tendência
+**Description:** `trendInsights.ts` sobre o período da tela de Tendências: última semana vs o período (FC repouso, VFC, passos, estresse, Body Battery máximo), dia da semana mais e menos ativo, noite mais curta da semana, taxa de dias batendo a meta de passos, e sono × dia seguinte (Body Battery máximo e FC repouso depois de noites curtas vs noites boas). Painel "O que as suas tendências mostram".
+**Acceptance criteria:**
+- [x] Cada regra tem teste que dispara e que não dispara (inclui período curto demais)
+- [x] Trocar o período recalcula; tom por ícone + texto
+**Dependencies:** T6 · **Files:** web/src/lib/trendInsights.ts(+test), TrendsPage.tsx(+test) · **Scope:** M
+
 ## ~~Task 7: Volume semanal de atividades~~ → absorvida pela R2
 **Description:** gráfico de distância/tempo por semana no período escolhido, na tela de Tendências.
 **Acceptance criteria:**

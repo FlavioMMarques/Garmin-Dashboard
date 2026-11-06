@@ -147,4 +147,15 @@ describe("TrendsPage", () => {
     renderPage();
     expect(await screen.findByText(/nenhum dado do relógio/i)).toBeInTheDocument();
   });
+
+  it("shows what the trends reveal", async () => {
+    mockApi(); // 9.000 steps a day against a 10.000 goal
+    renderPage();
+    expect(
+      await screen.findByRole("heading", { name: "O que as suas tendências mostram" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Meta de passos batida em 0 de 30 dias" }),
+    ).toBeInTheDocument();
+  });
 });
