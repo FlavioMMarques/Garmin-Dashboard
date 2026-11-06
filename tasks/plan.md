@@ -56,7 +56,7 @@ activities ─▶ runs route (R1) ─▶ volume/ritmo (R2), eficiência/marcas (
 - [x] H2 Histórico diário: `/api/daily/range` (v2 dailysummaries, blocos ≤ 366 dias) — base para insights e para a T6
 - [x] H3 Insights do dia: o dia escolhido comparado com os seus últimos 30 dias, painel na Saúde diária
 ### Checkpoint H ✅ — insights de saúde diária revisados pelo usuário (2026-11-05)
-- [ ] T5 Sono (blocos de datas + rota + tela)
+- [x] T5 Sono (blocos de datas + rota + tela)
 - [ ] H4 Insights de sono (duração, regularidade de horários, fases, pontuação vs o seu padrão)
 - [ ] T6 Tendências de saúde (7/30/90 dias, gráficos) — reaproveita a H2
 - [ ] H5 Insights de tendência (FC repouso, estresse, Body Battery, passos: direção, dia da semana, sequências)

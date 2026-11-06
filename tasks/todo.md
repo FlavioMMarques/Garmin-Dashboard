@@ -191,8 +191,8 @@
 ## Task 5: Sono
 **Description:** `dateRanges.ts` quebra períodos em blocos ≤ 31 dias; `/api/sleep?start&end`; tela com noites (duração, fases, pontuação).
 **Acceptance criteria:**
-- [ ] 90 dias → 3 chamadas à Garmin, resultado contínuo e ordenado
-- [ ] Barra empilhada das fases por noite
+- [x] 90 dias → 3 chamadas de sono (+3 de VFC) à Garmin, resultado contínuo e ordenado
+- [x] Barra empilhada das fases por noite
 **Verification:** testes de `dateRanges`; comparar 2 noites com o app
 **Dependencies:** T2
 **Files:** server/src/dateRanges.ts(+test), server/src/routes/sleep.ts, web/src/pages/Sleep.tsx

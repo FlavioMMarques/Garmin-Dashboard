@@ -4,6 +4,7 @@ const TOKENS = {
   series1: "--series-1",
   series2: "--series-2",
   series3: "--series-3",
+  series4: "--series-4",
   muted: "--series-muted",
   grid: "--chart-grid",
   axis: "--chart-axis",
