@@ -137,3 +137,69 @@ describe("geminiClient.verifyKey", () => {
     await expect(client.verifyKey("bad")).rejects.toMatchObject({ code: "invalid_key" });
   });
 });
+
+describe("geminiClient fallback and timeout", () => {
+  /** Answers per model: a Response, or "hang" to never answer (until aborted). */
+  function multi(byModel: Record<string, Response | "hang">, timeoutMs = 1_000) {
+    const fetchFn = vi.fn(async (input: string | URL | Request, init?: RequestInit) => {
+      const model = /models\/([^:/]+)/.exec(String(input))![1]!;
+      const answer = byModel[model];
+      if (answer === "hang" || !answer) {
+        return new Promise<Response>((_, reject) =>
+          init?.signal?.addEventListener("abort", () =>
+            reject(new DOMException("aborted", "AbortError")),
+          ),
+        );
+      }
+      return answer.clone();
+    });
+    const client = createGeminiClient({
+      apiKey: () => "AIza-test",
+      model: "main-flash",
+      fallbackModels: ["lite-flash"],
+      timeoutMs,
+      baseUrl: BASE,
+      fetchFn,
+    });
+    const models = () => fetchFn.mock.calls.map(([u]) => /models\/([^:/]+)/.exec(String(u))![1]);
+    return { client, models };
+  }
+
+  const busy = () => json({ error: { status: "UNAVAILABLE", message: "high demand" } }, 503);
+
+  it("tries the fallback model when the main one is overloaded", async () => {
+    const { client, models } = multi({ "main-flash": busy(), "lite-flash": reply("ok lite") });
+    expect(await client.ask(ASK)).toBe("ok lite");
+    expect(models()).toEqual(["main-flash", "lite-flash"]);
+  });
+
+  it("tries the fallback model when the main one does not answer in time", async () => {
+    const { client } = multi({ "main-flash": "hang", "lite-flash": reply("ok lite") }, 20);
+    expect(await client.ask(ASK)).toBe("ok lite");
+  });
+
+  it("does not fall back on a rejected key or the rate limit", async () => {
+    const { client, models } = multi({
+      "main-flash": json({ error: {} }, 429),
+      "lite-flash": reply("x"),
+    });
+    await expect(client.ask(ASK)).rejects.toMatchObject({ code: "rate_limited" });
+    expect(models()).toEqual(["main-flash"]);
+  });
+
+  it("explains that Gemini is busy when every model is overloaded", async () => {
+    const { client } = multi({ "main-flash": busy(), "lite-flash": busy() });
+    await expect(client.ask(ASK)).rejects.toMatchObject({
+      code: "upstream",
+      message: expect.stringMatching(/sobrecarregado/),
+    });
+  });
+
+  it("gives up with a timeout message when nothing answers", async () => {
+    const { client } = multi({ "main-flash": "hang", "lite-flash": "hang" }, 20);
+    await expect(client.ask(ASK)).rejects.toMatchObject({
+      code: "upstream",
+      message: expect.stringMatching(/demorou/),
+    });
+  });
+});

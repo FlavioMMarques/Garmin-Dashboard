@@ -45,6 +45,7 @@ const settings = {
 const gemini = createGeminiClient({
   apiKey: () => readEnvKey("GEMINI_API_KEY"),
   model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
+  fallbackModels: ["gemini-3.5-flash-lite"],
 });
 const ask = {
   gemini,

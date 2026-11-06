@@ -37,6 +37,10 @@ export interface GeminiClient {
 interface Options {
   apiKey: () => string | undefined;
   model: string;
+  /** Tried in order when the model is overloaded or too slow (free tier gets busy). */
+  fallbackModels?: string[];
+  /** Per attempt. */
+  timeoutMs?: number;
   baseUrl?: string;
   fetchFn?: typeof fetch;
 }
@@ -56,16 +60,28 @@ export const DEFAULT_GEMINI_BASE_URL = "https://generativelanguage.googleapis.co
 export function createGeminiClient({
   apiKey,
   model,
+  fallbackModels = [],
+  timeoutMs = 45_000,
   baseUrl = DEFAULT_GEMINI_BASE_URL,
   fetchFn = fetch,
 }: Options): GeminiClient {
-  const modelUrl = `${baseUrl}/v1beta/models/${encodeURIComponent(model)}`;
+  const modelUrl = (m: string) => `${baseUrl}/v1beta/models/${encodeURIComponent(m)}`;
 
   async function send(url: string, key: string, init: RequestInit = {}): Promise<Response> {
-    const res = await fetchFn(url, {
-      ...init,
-      headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
-    });
+    let res: Response;
+    try {
+      res = await fetchFn(url, {
+        ...init,
+        headers: { "x-goog-api-key": key, "Content-Type": "application/json" },
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+    } catch (err) {
+      const name = (err as Error).name;
+      if (name === "TimeoutError" || name === "AbortError") {
+        throw new GeminiError("upstream", "O Gemini demorou demais para responder. Tente de novo.");
+      }
+      throw new GeminiError("upstream", "Não foi possível falar com o Gemini (sem internet?).");
+    }
     if (res.ok) return res;
     const body = (await res.json().catch(() => ({}))) as { error?: { message?: string } };
     const detail = body.error?.message ?? "";
@@ -80,8 +96,21 @@ export function createGeminiClient({
         res.status,
       );
     }
+    if (res.status === 503) {
+      throw new GeminiError(
+        "upstream",
+        "O Gemini está sobrecarregado agora. Tente de novo em alguns minutos.",
+        res.status,
+      );
+    }
     throw new GeminiError("upstream", `O Gemini respondeu ${res.status}`, res.status);
   }
+
+  /** Overloaded, failing on Google's side or too slow: another model may still answer. */
+  const worthAnotherModel = (err: unknown) =>
+    err instanceof GeminiError &&
+    err.code === "upstream" &&
+    (err.status === undefined || err.status >= 500);
 
   return {
     async ask({ system, history, question }) {
@@ -91,10 +120,19 @@ export function createGeminiClient({
         role: t.role,
         parts: [{ text: t.text }],
       }));
-      const res = await send(`${modelUrl}:generateContent`, key, {
-        method: "POST",
-        body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents }),
-      });
+      const body = JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents });
+      let res: Response | undefined;
+      let lastError: unknown;
+      for (const m of [model, ...fallbackModels]) {
+        try {
+          res = await send(`${modelUrl(m)}:generateContent`, key, { method: "POST", body });
+          break;
+        } catch (err) {
+          if (!worthAnotherModel(err)) throw err;
+          lastError = err;
+        }
+      }
+      if (!res) throw lastError;
       const data = (await res.json()) as RawResponse;
       const text = (data.candidates?.[0]?.content?.parts ?? [])
         .filter((p) => typeof p.text === "string" && !p.thought)
@@ -111,7 +149,7 @@ export function createGeminiClient({
     },
 
     async verifyKey(key) {
-      await send(modelUrl, key);
+      await send(modelUrl(model), key);
     },
   };
 }
