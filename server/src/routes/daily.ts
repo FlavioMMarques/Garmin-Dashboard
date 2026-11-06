@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import type { GarminClient } from "../garminClient.js";
 import { daysInRange, eachDay, splitRange } from "../dateRanges.js";
+import { createTtlCache } from "../ttlCache.js";
 
 // usersummary/daily (not v2/dailysummaries): its min/max HR are the raw values the app shows.
 const DAILY_PATH = "/usersummary-service/usersummary/daily";
@@ -163,22 +164,8 @@ export function dailyRoutes(
   garmin: GarminClient,
   { now = Date.now, onReset }: { now?: () => number; onReset?: (reset: () => void) => void } = {},
 ) {
-  const cache = new Map<string, { expiresAt: number; value: Promise<unknown> }>();
-  onReset?.(() => cache.clear());
-
-  /** Memoizes `load()` under `key` for CACHE_TTL_MS; failures are not cached. */
-  function cached<T>(key: string, load: () => Promise<T>): Promise<T> {
-    const hit = cache.get(key);
-    if (hit && now() < hit.expiresAt) return hit.value as Promise<T>;
-    for (const [k, entry] of cache) if (now() >= entry.expiresAt) cache.delete(k);
-    const value = load();
-    cache.set(key, { expiresAt: now() + CACHE_TTL_MS, value });
-    // Only drop the entry if it is still this request's.
-    value.catch(() => {
-      if (cache.get(key)?.value === value) cache.delete(key);
-    });
-    return value;
-  }
+  const { get: cached, clear } = createTtlCache(CACHE_TTL_MS, now);
+  onReset?.(clear);
 
   async function loadRange(from: string, to: string): Promise<DayPoint[]> {
     const responses = await Promise.all(

@@ -191,15 +191,23 @@
 ## Task 5: Sono
 **Description:** `dateRanges.ts` quebra períodos em blocos ≤ 31 dias; `/api/sleep?start&end`; tela com noites (duração, fases, pontuação).
 **Acceptance criteria:**
-- [ ] 90 dias → 3 chamadas à Garmin, resultado contínuo e ordenado
-- [ ] Barra empilhada das fases por noite
+- [x] 90 dias → 3 chamadas de sono (+3 de VFC) à Garmin, resultado contínuo e ordenado
+- [x] Barra empilhada das fases por noite
 **Verification:** testes de `dateRanges`; comparar 2 noites com o app
 **Dependencies:** T2
 **Files:** server/src/dateRanges.ts(+test), server/src/routes/sleep.ts, web/src/pages/Sleep.tsx
 **Scope:** M
 
+## H4: Insights de sono
+**Description:** `sleepInsights.ts` sobre as noites do período escolhido: sono médio vs a necessidade da Garmin; noites curtas (< 6 h); regularidade do horário de dormir; diferença de horário no fim de semana; proporção de profundo e REM vs referências comuns; VFC recente vs a sua faixa equilibrada; tendência da última semana vs o resto do período; horário de dormir × pontuação (as suas melhores noites); noites sem registro. Painel "O que o seu sono mostra" na tela de Sono.
+**Acceptance criteria:**
+- [x] Cada regra tem teste que dispara e teste que não dispara (inclui poucos dados)
+- [x] Trocar o período recalcula; tom por ícone + texto
+**Verification:** testes; varredura com dados reais; screenshot
+**Dependencies:** T5 · **Files:** web/src/lib/sleepInsights.ts(+test), SleepPage.tsx(+test) · **Scope:** M
+
 ## Checkpoint B
-- [ ] Testes e typecheck passam; 3 telas com dados reais
+- [x] Testes e typecheck passam; 3 telas com dados reais
 
 ## Task 6: Tendências de saúde
 **Description:** `/api/trends?days=7|30|90` junta resumo diário + sono + body battery; gráficos de passos, FC repouso, horas de sono, estresse, Body Battery.
